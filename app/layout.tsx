@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${poppins.variable} ${baiJamjuree.variable} bg-background px-3 text-white antialiased`}
+        className={`${poppins.variable} ${baiJamjuree.variable} bg-background text-white antialiased`}
       >
         {children}
       </body>

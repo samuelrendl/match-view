@@ -4,7 +4,7 @@ import SearchBar from "./SearchBar";
 
 const Navbar = () => {
   return (
-    <nav>
+    <nav className="m-4 flex justify-between gap-5">
       <Link
         href="/"
         className=" font-bai-jamjuree text-2xl font-semibold italic text-white"

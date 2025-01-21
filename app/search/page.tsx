@@ -1,11 +1,12 @@
-import MatchHistory from "@/components/MatchHistory";
+import Profile from "@/components/Profile";
+import Navbar from "@/components/Navbar";
 
 const page = () => {
   return (
-    <div>
-      <h2 className="text-white">TEST</h2>
-      <MatchHistory />
-    </div>
+    <>
+      <Navbar />
+      <Profile />
+    </>
   );
 };
 

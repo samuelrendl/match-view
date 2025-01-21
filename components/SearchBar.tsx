@@ -18,20 +18,20 @@ const SearchBar = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit} className="flex rounded-md bg-white">
+    <>
+      <form onSubmit={handleSubmit} className="flex rounded-sm bg-white">
         <Input
           type="text"
-          className="border-none text-black shadow-none outline-none focus-visible:ring-transparent"
+          className="border-none text-sm text-black shadow-none outline-none focus-visible:ring-transparent"
           placeholder="Search your RiotID..."
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
-        <Button type="submit" variant="secondary">
+        <Button type="submit" variant="ghost" className="hidden">
           <MagnifyingGlassIcon />
         </Button>
       </form>
-    </div>
+    </>
   );
 };
 
