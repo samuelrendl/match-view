@@ -3,6 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import MatchCard from "./MatchCard";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 const splitUsername = (username: string) => {
   if (!username.includes("#")) {
@@ -14,14 +15,10 @@ const splitUsername = (username: string) => {
   return { gameName, tagLine };
 };
 
-// gameName a tagLine musim mi pro ziskal puuid
-// puuid potrebuju pro fetchnuti Match-V5
-// To mi vrati array
-// Pak budu muset mapnout over ty matchID jsou budou v tom array a zobrazim je
-
 const Profile = () => {
   const searchParams = useSearchParams();
   const username = searchParams.get("username");
+  const [version, setVersion] = useState("");
 
   if (!username) {
     console.log("Username is required");
@@ -34,7 +31,22 @@ const Profile = () => {
   }
 
   const championName = "Aatrox";
-  const version = "15.1.1";
+
+  useEffect(() => {
+    const fetchGameVersion = async () => {
+      try {
+        const response = await fetch(
+          "https://ddragon.leagueoflegends.com/api/versions.json"
+        );
+        if (!response.ok) throw new Error("Error fetching game version");
+        const versions = await response.json();
+        setVersion(versions[0]);
+      } catch (error) {
+        console.error(error.message);
+      }
+    };
+    fetchGameVersion();
+  }, []);
 
   return (
     <div className="mx-4">

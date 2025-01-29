@@ -1,23 +1,9 @@
 
 
-// queueId
-// gameCreation
-// gameResult - gameDuration
 
-// Musim matchnout vyhledany puuid s participants puuid a zjistit co hral
+const MatchCard = ({ params }) => {
 
-// championName / pic - champLevel
-//
-//
-// "item0": 3161,
-// "item1": 6692,
-// "item2": 3071,
-// "item3": 3173,
-// "item4": 3053,
-// "item5": 1011,
-// "item6": 3340,
-
-const MatchCard = () => {
+  const { queueId, gameCreation, gameResult, gameDuration} = params;
 
   return (
     <div>
