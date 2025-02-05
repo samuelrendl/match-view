@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const timeAgo = (timestamp: number) => {
+export const timeAgo = (timestamp: number) => {
   const now = Date.now();
   const diff = now - timestamp;
 
@@ -27,3 +27,13 @@ const timeAgo = (timestamp: number) => {
 // Example usage:
 // const timestamp = 1737051353154; // Replace with your timestamp
 // console.log(timeAgo(timestamp));
+
+export const splitUsername = (username: string) => {
+  if (!username.includes("#")) {
+    throw new Error(
+      "Invalid username format. Expected format: gameName#tagLine"
+    );
+  }
+  const [gameName, tagLine] = username.split("#");
+  return { gameName, tagLine };
+};
