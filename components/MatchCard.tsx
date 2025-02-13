@@ -1,4 +1,13 @@
-import { timeAgo } from "@/lib/utils";
+import { kdaRatioCal, timeAgo } from "@/lib/utils";
+
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
+import { fetchQueueId } from "@/utils/api";
 
 interface Participant {
   puuid: string;
@@ -58,55 +67,70 @@ const MatchCard = ({
 
   // Find the matching user in the participants array
   const user = findUserByPUUID(userPuuid, participants);
+  const kdaRatio = kdaRatioCal(
+    user?.kills ?? 0,
+    user?.assists ?? 0,
+    user?.deaths ?? 0
+  );
+
+  const checkQueueId = fetchQueueId(queueId);
 
   return (
-    <div>
-      {/* Match details */}
+    <Accordion type="single" collapsible>
+      <AccordionItem value="item-1">
+        <AccordionTrigger>
+          <div>
+            {/* Match details */}
 
-      <p>{queueId}</p>
-      <p>{howLongAgo}</p>
-      <p>LP Gain</p>
-      <p>
-        {user?.win} - {gameDuration}
-      </p>
-      {/* User champ & setup details */}
-      <div>
-        <div>
-          <p>{user?.championName}</p>
-          <p>{user?.champLevel}</p>
-        </div>
-        <div>
-          <p>SumSpell1</p>
-          <p>SumSpell2</p>
-        </div>
-        <div>
-          <p>PrimaryRune</p>
-          <p>SecondaryRune</p>
-        </div>
-      </div>
-      {/* Post Stats */}
-      <div>
-        <p>
-          {user?.kills} / {user?.assists} / {user?.deaths}
-        </p>
-        <p>KDA Ratio</p>
-        <p>{user?.totalMinionsKilled}</p>
-        <p>{user?.visionScore}</p>
-      </div>
-      <div>
-        <p>{user?.item0}</p>
-        <p>{user?.item1}</p>
-        <p>{user?.item2}</p>
-        <p>{user?.item3}</p>
-        <p>{user?.item4}</p>
-        <p>{user?.item5}</p>
-        <p>{user?.item6}</p>
-      </div>
-      <div>
-        <div>Team 1</div>
-        <div>Team 2</div>
-      </div>
-    </div>
+            <p>{checkQueueId}</p>
+            <p>{howLongAgo}</p>
+            <p>LP Gain</p>
+            <p>
+              {user?.win} - {gameDuration}
+            </p>
+            {/* User champ & setup details */}
+            <div>
+              <div>
+                <p>{user?.championName}</p>
+                <p>{user?.champLevel}</p>
+              </div>
+              <div>
+                <p>SumSpell1</p>
+                <p>SumSpell2</p>
+              </div>
+              <div>
+                <p>PrimaryRune</p>
+                <p>SecondaryRune</p>
+              </div>
+            </div>
+            {/* Post Stats */}
+            <div>
+              <p>
+                {user?.kills} / {user?.assists} / {user?.deaths}
+              </p>
+              <p>{kdaRatio}</p>
+              <p>{user?.totalMinionsKilled}</p>
+              <p>{user?.visionScore}</p>
+            </div>
+            <div>
+              <p>{user?.item0}</p>
+              <p>{user?.item1}</p>
+              <p>{user?.item2}</p>
+              <p>{user?.item3}</p>
+              <p>{user?.item4}</p>
+              <p>{user?.item5}</p>
+              <p>{user?.item6}</p>
+            </div>
+          </div>
+        </AccordionTrigger>
+        <AccordionContent>
+          <div>
+            <div>Team 1</div>
+            <div>Team 2</div>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
   );
 };
 

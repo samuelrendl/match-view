@@ -63,3 +63,18 @@ export const fetchMatchDetails = async (matchId: string, region = "europe") => {
   if (!response.ok) throw new Error("Failed to fetch match details");
   return await response.json();
 };
+
+export const fetchQueueId = async (queueId: string) => {
+  const response = await fetch(
+    `https://static.developer.riotgames.com/docs/lol/queues.json`
+  );
+  if (!response.ok) throw new Error("Failed to fetch queueId");
+
+  const queues = await response.json();
+  const queue = queues.find(
+    (q: { queueId: number }) => q.queueId === Number(queueId)
+  );
+  if (!queue) throw new Error("Queue ID not found");
+
+  return queue;
+};

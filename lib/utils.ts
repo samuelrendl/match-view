@@ -37,3 +37,7 @@ export const splitUsername = (username: string) => {
   const [gameName, tagLine] = username.split("#");
   return { gameName, tagLine };
 };
+
+export const kdaRatioCal = (kills: number, assists: number, deaths: number) => {
+  return (kills + assists) / deaths;
+};
