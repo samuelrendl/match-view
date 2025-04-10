@@ -67,7 +67,7 @@ export const findRuneOrTreeById = (
 
 export const findSummonerByKey = (
   key: string | number,
-  spellsData: { data: { [id: string]: SummonerSpellEntity } }
+  spellsData: { data: Record<string, SummonerSpellEntity> }
 ): SummonerSpellEntity => {
   const searchKey = typeof key === "number" ? key.toString() : key;
 
