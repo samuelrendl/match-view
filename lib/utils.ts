@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { RuneEntity, RuneTree, SummonerSpellEntity } from "../types/gameEntity";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -40,4 +41,43 @@ export const splitUsername = (username: string) => {
 
 export const kdaRatioCal = (kills: number, assists: number, deaths: number) => {
   return (kills + assists) / deaths;
+};
+
+export const findRuneOrTreeById = (
+  id: string | number,
+  runeTrees: RuneTree[]
+): RuneTree | RuneEntity => {
+  const searchId = typeof id === "string" ? parseInt(id, 10) : id;
+
+  const tree = runeTrees.find((tree) => tree.id === searchId);
+  if (tree) return tree;
+
+  const allRunes = runeTrees.flatMap((tree) =>
+    tree.slots.flatMap((slot) => slot.runes)
+  );
+
+  const rune = allRunes.find((rune) => rune.id === searchId);
+
+  if (!rune) {
+    throw new Error(`No rune or tree found with ID ${id}`);
+  }
+
+  return rune;
+};
+
+export const findSummonerByKey = (
+  key: string | number,
+  spellsData: { data: { [id: string]: SummonerSpellEntity } }
+): SummonerSpellEntity => {
+  const searchKey = typeof key === "number" ? key.toString() : key;
+
+  const spell = Object.values(spellsData.data).find(
+    (spell) => spell.key === searchKey
+  );
+
+  if (!spell) {
+    throw new Error(`No summoner spell found with key ${key}`);
+  }
+
+  return spell;
 };

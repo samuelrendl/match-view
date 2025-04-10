@@ -19,15 +19,31 @@ export const fetchAccount = async (
   tagLine: string,
   region = "europe"
 ) => {
-  const response = await fetch(
-    `https://${region}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${gameName}/${tagLine}`,
-    {
-      headers: { "X-Riot-Token": process.env.RIOT_API_KEY! },
-    }
-  );
+  try {
+    const encodedGameName = encodeURIComponent(gameName);
+    const encodedTagLine = encodeURIComponent(tagLine);
 
-  if (!response.ok) throw new Error("Failed to fetch PUUID");
-  return await response.json();
+    const response = await fetch(
+      `https://${region}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodedGameName}/${encodedTagLine}`,
+      {
+        headers: { "X-Riot-Token": process.env.RIOT_API_KEY! },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        `API Error ${response.status}: ${errorData?.status?.message || "Unknown error"}`
+      );
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Fetch error:", error);
+    throw new Error(
+      `Failed to fetch account: ${error instanceof Error ? error.message : "Unknown error"}`
+    );
+  }
 };
 
 export const fetchSummoner = async (puuid: string, region = "eun1") => {
@@ -77,4 +93,30 @@ export const fetchQueueId = async (queueId: string) => {
   if (!queue) throw new Error("Queue ID not found");
 
   return queue;
+};
+
+export const fetchItems = async (gameVersion: string) => {
+  const response = await fetch(
+    `https://ddragon.leagueoflegends.com/cdn/${gameVersion}/data/en_US/item.json`
+  );
+  if (!response.ok) throw new Error("Failed to fetch items");
+  const { data } = await response.json();
+  return data;
+};
+
+export const fetchSummonerSpells = async (gameVersion: string) => {
+  const response = await fetch(
+    `https://ddragon.leagueoflegends.com/cdn/${gameVersion}/data/en_US/summoner.json`
+  );
+  if (!response.ok) throw new Error("Failed to fetch summoners");
+  return await response.json();
+  
+};
+
+export const fetchRunes = async (gameVersion: string) => {
+  const response = await fetch(
+    `https://ddragon.leagueoflegends.com/cdn/${gameVersion}/data/en_US/runesReforged.json`
+  );
+  if (!response.ok) throw new Error("Failed to fetch runes");
+  return await response.json();
 };

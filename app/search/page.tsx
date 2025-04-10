@@ -33,7 +33,7 @@ const page = async ({ searchParams }: PageProps) => {
   // const matches = await Promise.all(
   //   matchIds.map((matchId: string) => fetchMatchDetails(matchId))
   // );
-  const match = await fetchMatchDetails("EUN1_3735624700");
+  const match = await fetchMatchDetails("EUN1_3744470811");
 
   return (
     <>
@@ -43,7 +43,7 @@ const page = async ({ searchParams }: PageProps) => {
           <Image
             src={`https://ddragon.leagueoflegends.com/cdn/${gameVersion}/img/profileicon/
 ${summoner.profileIconId}.png`}
-            alt={`Profile image`}
+            alt={`Profile Image`}
             width={50}
             height={50}
           />

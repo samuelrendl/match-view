@@ -1,49 +1,19 @@
-import { kdaRatioCal, timeAgo } from "@/lib/utils";
-
+import {
+  findRuneOrTreeById,
+  findSummonerByKey,
+  kdaRatioCal,
+  timeAgo,
+} from "@/lib/utils";
+import { Participant, MatchCardProps } from "../types/matchcard";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-
-import { fetchQueueId } from "@/utils/api";
-
-interface Participant {
-  puuid: string;
-  win: boolean;
-  championName: string;
-  champLevel: number;
-  summoner1Id: number;
-  summoner2Id: number;
-  kills: number;
-  assists: number;
-  deaths: number;
-  totalMinionsKilled: number;
-  visionScore: number;
-  item0: number;
-  item1: number;
-  item2: number;
-  item3: number;
-  item4: number;
-  item5: number;
-  item6: number;
-  // You can add other properties as needed (e.g. win, championName, champLevel, etc.)
-}
-
-interface MatchInfo {
-  gameCreation: number;
-  gameDuration: number;
-  queueId: string;
-  participants: Participant[];
-}
-
-interface MatchCardProps {
-  params: {
-    info: MatchInfo;
-    gameResult: string;
-  };
-}
+import { fetchItems, fetchRunes, fetchSummonerSpells } from "@/utils/api";
+import Image from "next/image";
+import GameEntity from "./GameEntity";
 
 const findUserByPUUID = (
   userPuuid: string,
@@ -52,7 +22,7 @@ const findUserByPUUID = (
   return participants.find((participant) => participant.puuid === userPuuid);
 };
 
-const MatchCard = ({
+const MatchCard = async ({
   userPuuid,
   params,
 }: {
@@ -60,7 +30,7 @@ const MatchCard = ({
   params: MatchCardProps["params"];
 }) => {
   const {
-    info: { gameCreation, gameDuration, queueId, participants },
+    info: { gameCreation, gameDuration, queueId, gameVersion, participants },
   } = params;
 
   const howLongAgo = timeAgo(gameCreation);
@@ -73,53 +43,140 @@ const MatchCard = ({
     user?.deaths ?? 0
   );
 
-  const checkQueueId = fetchQueueId(queueId);
+  const shortenGameVersion = (gameVersion: string): string => {
+    const parts = gameVersion.split(".");
+
+    // Make sure we at least have major and minor version parts
+    if (parts.length < 2) {
+      throw new Error("Invalid version format");
+    }
+
+    const [major, minor] = parts;
+    // Here we set the patch number to "1" regardless of the build or revision.
+    return `${major}.${minor}.1`;
+  };
+
+  const shorterGameVersion = shortenGameVersion(gameVersion);
+
+  const fetchedItems = await fetchItems(shorterGameVersion);
+  const fetchedSummoners = await fetchSummonerSpells(shorterGameVersion);
+  const fetchedRunes = await fetchRunes(shorterGameVersion);
+
+  // const checkQueueId = fetchQueueId(queueId);
+
+  const items = [
+    user?.item0,
+    user?.item1,
+    user?.item2,
+    user?.item3,
+    user?.item4,
+    user?.item5,
+    user?.item6,
+  ];
+
+  const primaryRune = findRuneOrTreeById(
+    user?.perks.styles[0].selections[0].perk ?? 0,
+    fetchedRunes
+  );
+
+  const secondaryRune = findRuneOrTreeById(
+    user?.perks.styles[1].style ?? 0,
+    fetchedRunes
+  );
+
+  const summonerOne = findSummonerByKey(
+    user?.summoner1Id ?? 0,
+    fetchedSummoners
+  );
+  const summonerTwo = findSummonerByKey(
+    user?.summoner2Id ?? 0,
+    fetchedSummoners
+  );
 
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="item-1">
-        <AccordionTrigger>
-          <div>
+        <AccordionTrigger className="hover:no-underline">
+          <div className="flex gap-3">
             {/* Match details */}
-
-            <p>{checkQueueId}</p>
-            <p>{howLongAgo}</p>
-            <p>LP Gain</p>
-            <p>
-              {user?.win} - {gameDuration}
-            </p>
-            {/* User champ & setup details */}
             <div>
-              <div>
-                <p>{user?.championName}</p>
-                <p>{user?.champLevel}</p>
+              <p>{queueId}</p>
+              <p>{howLongAgo}</p>
+              <p>LP Gain</p>
+              <p>
+                {user?.win} - {gameDuration}
+              </p>
+            </div>
+
+            {/* User champ & setup details */}
+            <div className="flex gap-2">
+              <div className="relative size-10">
+                <Image
+                  src={`https://ddragon.leagueoflegends.com/cdn/${shorterGameVersion}/img/champion/${user?.championName}.png`}
+                  alt={`${user?.championName}`}
+                  width={40}
+                  height={40}
+                />
+                <p className="absolute bottom-0 left-0 rounded-bl-lg bg-black/70 px-1 text-xs text-white">
+                  {user?.champLevel}
+                </p>
               </div>
               <div>
-                <p>SumSpell1</p>
-                <p>SumSpell2</p>
+                <GameEntity
+                  entity={summonerOne}
+                  type="summoner"
+                  gameVersion={shorterGameVersion}
+                />
+                <GameEntity
+                  entity={summonerTwo}
+                  type="summoner"
+                  gameVersion={shorterGameVersion}
+                />
               </div>
               <div>
-                <p>PrimaryRune</p>
-                <p>SecondaryRune</p>
+                <div>
+                  {primaryRune && "longDesc" in primaryRune && (
+                    <GameEntity
+                      entity={primaryRune}
+                      type="rune"
+                      gameVersion={shorterGameVersion}
+                    />
+                  )}
+                </div>
+                <div>
+                  <GameEntity
+                    entity={{
+                      ...secondaryRune,
+                      icon: secondaryRune.icon,
+                    }}
+                    type="rune"
+                    gameVersion={shorterGameVersion}
+                  />
+                </div>
               </div>
             </div>
             {/* Post Stats */}
             <div>
-              <p>
-                {user?.kills} / {user?.assists} / {user?.deaths}
-              </p>
-              <p>{kdaRatio}</p>
-              <p>{user?.totalMinionsKilled}</p>
-              <p>{user?.visionScore}</p>
-            </div>
-            <div>
-              <p>{user?.item0}</p>
-              <p>{user?.item1}</p>
-              <p>{user?.item2}</p>
-              <p>{user?.item3}</p>
-              <p>{user?.item4}</p>
-              <p>{user?.item5}</p>
-              <p>{user?.item6}</p>
+              <div className="grid grid-flow-col gap-1">
+                {items.map((item, index) => (
+                  <GameEntity
+                    key={`item-${index}`}
+                    entity={fetchedItems[item!]}
+                    gameVersion={shorterGameVersion}
+                    type="item"
+                  />
+                ))}
+              </div>
+              <div className="flex">
+                <div>
+                  <p>
+                    {user?.kills} / {user?.assists} / {user?.deaths}
+                  </p>
+                </div>
+                <p>{kdaRatio}</p>
+                <p>{user?.totalMinionsKilled}</p>
+                <p>{user?.visionScore}</p>
+              </div>
             </div>
           </div>
         </AccordionTrigger>
