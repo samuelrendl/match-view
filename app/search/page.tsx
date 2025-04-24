@@ -33,7 +33,7 @@ const page = async ({ searchParams }: PageProps) => {
   // const matches = await Promise.all(
   //   matchIds.map((matchId: string) => fetchMatchDetails(matchId))
   // );
-  const match = await fetchMatchDetails("EUN1_3744470811");
+  const match = await fetchMatchDetails("EUN1_3769864828");
 
   return (
     <>

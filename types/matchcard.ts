@@ -32,6 +32,7 @@ export interface MatchInfo {
   gameCreation: number;
   gameDuration: number;
   queueId: string;
+  gameMode: string;
   gameVersion: string;
   participants: Participant[];
 }

@@ -1,6 +1,7 @@
 import {
   findRuneOrTreeById,
   findSummonerByKey,
+  formatGameDuration,
   kdaRatioCal,
   timeAgo,
 } from "@/lib/utils";
@@ -11,7 +12,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { fetchItems, fetchRunes, fetchSummonerSpells } from "@/utils/api";
+import {
+  fetchItems,
+  fetchQueueId,
+  fetchRunes,
+  fetchSummonerSpells,
+} from "@/utils/api";
 import Image from "next/image";
 import GameEntity from "./GameEntity";
 
@@ -30,7 +36,14 @@ const MatchCard = async ({
   params: MatchCardProps["params"];
 }) => {
   const {
-    info: { gameCreation, gameDuration, queueId, gameVersion, participants },
+    info: {
+      gameCreation,
+      gameDuration,
+      queueId,
+      gameMode,
+      gameVersion,
+      participants,
+    },
   } = params;
 
   const howLongAgo = timeAgo(gameCreation);
@@ -62,7 +75,7 @@ const MatchCard = async ({
   const fetchedSummoners = await fetchSummonerSpells(shorterGameVersion);
   const fetchedRunes = await fetchRunes(shorterGameVersion);
 
-  // const checkQueueId = fetchQueueId(queueId);
+  const gameType = await fetchQueueId(queueId, gameMode);
 
   const items = [
     user?.item0,
@@ -93,21 +106,13 @@ const MatchCard = async ({
     fetchedSummoners
   );
 
+  const formatedGameDuration = formatGameDuration(gameDuration);
+
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="item-1">
         <AccordionTrigger className="hover:no-underline">
           <div className="flex gap-3">
-            {/* Match details */}
-            <div>
-              <p>{queueId}</p>
-              <p>{howLongAgo}</p>
-              <p>LP Gain</p>
-              <p>
-                {user?.win} - {gameDuration}
-              </p>
-            </div>
-
             {/* User champ & setup details */}
             <div className="flex gap-2">
               <div className="relative size-10">
@@ -121,6 +126,8 @@ const MatchCard = async ({
                   {user?.champLevel}
                 </p>
               </div>
+
+              {/* Summoners */}
               <div>
                 <GameEntity
                   entity={summonerOne}
@@ -133,6 +140,8 @@ const MatchCard = async ({
                   gameVersion={shorterGameVersion}
                 />
               </div>
+
+              {/* Runes */}
               <div>
                 <div>
                   {primaryRune && "longDesc" in primaryRune && (
@@ -155,27 +164,46 @@ const MatchCard = async ({
                 </div>
               </div>
             </div>
-            {/* Post Stats */}
+
+            {/* Details */}
             <div>
+              {/* Match details */}
+              <div className="flex gap-2 text-xs">
+                <p>{gameType}</p>
+                <p>{howLongAgo}</p>
+                <p className="hidden">25 LP</p>
+                <p>
+                  {user?.win}{" "}
+                  <span className="hidden">- {formatedGameDuration}</span>
+                </p>
+              </div>
+              {/* Items */}
               <div className="grid grid-flow-col gap-1">
                 {items.map((item, index) => (
-                  <GameEntity
+                  <div
                     key={`item-${index}`}
-                    entity={fetchedItems[item!]}
-                    gameVersion={shorterGameVersion}
-                    type="item"
-                  />
+                    className="relative size-5 bg-black/50"
+                  >
+                    <GameEntity
+                      entity={fetchedItems[item!]}
+                      gameVersion={shorterGameVersion}
+                      type="item"
+                    />
+                  </div>
                 ))}
               </div>
-              <div className="flex">
+              {/* Stats */}
+              <div className="flex gap-4 text-xs">
                 <div>
                   <p>
                     {user?.kills} / {user?.assists} / {user?.deaths}
                   </p>
                 </div>
-                <p>{kdaRatio}</p>
-                <p>{user?.totalMinionsKilled}</p>
-                <p>{user?.visionScore}</p>
+                <div className="flex items-center gap-1">
+                  <p>{kdaRatio} KDA</p>
+                  <p className="hidden">{user?.totalMinionsKilled} CS</p>
+                  <p className="hidden">{user?.visionScore} Vision</p>
+                </div>
               </div>
             </div>
           </div>

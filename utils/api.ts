@@ -80,19 +80,56 @@ export const fetchMatchDetails = async (matchId: string, region = "europe") => {
   return await response.json();
 };
 
-export const fetchQueueId = async (queueId: string) => {
-  const response = await fetch(
-    `https://static.developer.riotgames.com/docs/lol/queues.json`
-  );
-  if (!response.ok) throw new Error("Failed to fetch queueId");
+export const fetchQueueId = async (
+  queueId: string,
+  gamemode: string
+): Promise<string> => {
+  const [queueRes, gamemodeRes] = await Promise.all([
+    fetch("https://static.developer.riotgames.com/docs/lol/queues.json"),
+    fetch("https://static.developer.riotgames.com/docs/lol/gameModes.json"),
+  ]);
 
-  const queues = await response.json();
-  const queue = queues.find(
-    (q: { queueId: number }) => q.queueId === Number(queueId)
-  );
-  if (!queue) throw new Error("Queue ID not found");
+  if (!queueRes.ok) throw new Error("Failed to fetch queue data");
+  if (!gamemodeRes.ok) throw new Error("Failed to fetch gamemode data");
 
-  return queue;
+  const queues = await queueRes.json();
+  const gamemodes = await gamemodeRes.json();
+
+  const customGameModes: Record<number, string> = {
+    0: "Custom",
+    400: "Normal Draft",
+    420: "Ranked Solo",
+    440: "Ranked Flex",
+    450: "ARAM",
+    700: "Clash",
+    720: "ARAM Clash",
+    900: "ARURF",
+    1020: "One for All",
+    1400: "Ultimate Spellbook",
+    1700: "Arena",
+    1710: "Arena",
+    2000: "Tutorial",
+  };
+
+  const numericQueueId = Number(queueId);
+  if (customGameModes[numericQueueId]) {
+    return customGameModes[numericQueueId];
+  }
+
+  if (gamemode !== "CLASSIC") {
+    const foundGamemode = gamemodes.find(
+      (g: { gamemode: string }) => g.gamemode === gamemode
+    );
+    if (!foundGamemode) throw new Error("Gamemode not found");
+    return foundGamemode.description;
+  }
+
+  const foundQueue = queues.find(
+    (q: { queueId: number }) => q.queueId === numericQueueId
+  );
+  if (!foundQueue) throw new Error("Queue ID not found");
+
+  return foundQueue.description;
 };
 
 export const fetchItems = async (gameVersion: string) => {
@@ -110,7 +147,6 @@ export const fetchSummonerSpells = async (gameVersion: string) => {
   );
   if (!response.ok) throw new Error("Failed to fetch summoners");
   return await response.json();
-  
 };
 
 export const fetchRunes = async (gameVersion: string) => {

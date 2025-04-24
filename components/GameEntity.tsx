@@ -14,6 +14,10 @@ import {
 } from "../types/gameEntity";
 
 function GameEntity({ entity, gameVersion, type }: GameEntityProps) {
+  if (!entity) {
+    return null;
+  }
+
   // Type guard helpers
   const isItem = (e: GameEntity): e is ItemEntity =>
     "gold" in e && "plaintext" in e;
