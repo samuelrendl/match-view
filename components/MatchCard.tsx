@@ -106,110 +106,132 @@ const MatchCard = async ({
     fetchedSummoners
   );
 
+  const gameResult = () => {
+    const result = user?.win ?? false;
+    if (result === true) {
+      return "WIN";
+    } else {
+      return "LOSS";
+    }
+  };
+
   const formatedGameDuration = formatGameDuration(gameDuration);
 
   return (
-    <Accordion type="single" collapsible>
-      <AccordionItem value="item-1">
-        <AccordionTrigger className="hover:no-underline">
-          <div className="flex gap-3">
-            {/* User champ & setup details */}
-            <div className="flex gap-2">
-              <div className="relative size-10">
-                <Image
-                  src={`https://ddragon.leagueoflegends.com/cdn/${shorterGameVersion}/img/champion/${user?.championName}.png`}
-                  alt={`${user?.championName}`}
-                  width={40}
-                  height={40}
-                />
-                <p className="absolute bottom-0 left-0 rounded-bl-lg bg-black/70 px-1 text-xs text-white">
-                  {user?.champLevel}
-                </p>
-              </div>
-
-              {/* Summoners */}
-              <div>
-                <GameEntity
-                  entity={summonerOne}
-                  type="summoner"
-                  gameVersion={shorterGameVersion}
-                />
-                <GameEntity
-                  entity={summonerTwo}
-                  type="summoner"
-                  gameVersion={shorterGameVersion}
-                />
-              </div>
-
-              {/* Runes */}
-              <div>
-                <div>
-                  {primaryRune && "longDesc" in primaryRune && (
-                    <GameEntity
-                      entity={primaryRune}
-                      type="rune"
-                      gameVersion={shorterGameVersion}
-                    />
-                  )}
-                </div>
-                <div>
-                  <GameEntity
-                    entity={{
-                      ...secondaryRune,
-                      icon: secondaryRune.icon,
-                    }}
-                    type="rune"
-                    gameVersion={shorterGameVersion}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Details */}
-            <div>
-              {/* Match details */}
+    <Accordion
+      type="single"
+      collapsible
+      className={`rounded-md ${gameResult() === "WIN" ? "bg-matchCard-bg_win" : "bg-matchCard-bg_loss "}`}
+    >
+      <AccordionItem value="item-1" className="mx-2 border-none">
+        <AccordionTrigger className="py-2 hover:no-underline">
+          <div className="flex w-full flex-col gap-2">
+            {/* Match summary */}
+            <div className="flex justify-between">
+              <p>
+                {gameResult()}
+                <span className="hidden">- {formatedGameDuration}</span>
+              </p>
               <div className="flex gap-2 text-xs">
                 <p>{gameType}</p>
                 <p>{howLongAgo}</p>
                 <p className="hidden">25 LP</p>
-                <p>
-                  {user?.win}{" "}
-                  <span className="hidden">- {formatedGameDuration}</span>
-                </p>
               </div>
-              {/* Items */}
-              <div className="grid grid-flow-col gap-1">
-                {items.map((item, index) => (
-                  <div
-                    key={`item-${index}`}
-                    className="relative size-5 bg-black/50"
-                  >
+            </div>
+
+            {/* Champ & details row */}
+            <div className="flex justify-between">
+              {/* Left side - champion, summoners, runes */}
+              <div className="flex justify-between gap-0.5">
+                {/* Champion */}
+                <div className="relative">
+                  <Image
+                    src={`https://ddragon.leagueoflegends.com/cdn/${shorterGameVersion}/img/champion/${user?.championName}.png`}
+                    alt={`${user?.championName}`}
+                    width={42}
+                    height={42}
+                    className="rounded object-contain"
+                  />
+                  <div className="absolute bottom-0 left-0 w-4 rounded-sm bg-black/50 text-center text-[10px] font-bold leading-snug text-white">
+                    {user?.champLevel}
+                  </div>
+                </div>
+
+                <div className="flex gap-0.5">
+                  {/* Summoners */}
+                  <div className="flex flex-col justify-between">
                     <GameEntity
-                      entity={fetchedItems[item!]}
+                      entity={summonerOne}
+                      type="summoner"
                       gameVersion={shorterGameVersion}
-                      type="item"
+                    />
+                    <GameEntity
+                      entity={summonerTwo}
+                      type="summoner"
+                      gameVersion={shorterGameVersion}
                     />
                   </div>
-                ))}
+                  {/* Runes */}
+                  <div className="flex flex-col justify-between">
+                    {primaryRune && "longDesc" in primaryRune ? (
+                      <GameEntity
+                        entity={primaryRune}
+                        type="rune"
+                        gameVersion={shorterGameVersion}
+                      />
+                    ) : (
+                      <div /> // fallback empty cell if no rune
+                    )}
+
+                    <GameEntity
+                      entity={{
+                        ...secondaryRune,
+                        icon: secondaryRune.icon,
+                      }}
+                      type="rune"
+                      gameVersion={shorterGameVersion}
+                    />
+                  </div>
+                </div>
               </div>
-              {/* Stats */}
-              <div className="flex gap-4 text-xs">
-                <div>
+
+              {/* Right side - items & stats */}
+              <div className="flex flex-col justify-between">
+                {/* Items */}
+                <div className="grid grid-flow-col gap-0.5">
+                  {items.map((item, index) => (
+                    <div
+                      key={`item-${index}`}
+                      className="relative size-5 rounded-sm bg-black/50"
+                    >
+                      <GameEntity
+                        entity={fetchedItems[item!]}
+                        gameVersion={shorterGameVersion}
+                        type="item"
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* KDA + CS */}
+                <div className="ml-auto mr-0 flex gap-4 text-xs">
                   <p>
                     {user?.kills} / {user?.assists} / {user?.deaths}
                   </p>
-                </div>
-                <div className="flex items-center gap-1">
-                  <p>{kdaRatio} KDA</p>
-                  <p className="hidden">{user?.totalMinionsKilled} CS</p>
-                  <p className="hidden">{user?.visionScore} Vision</p>
+                  <div className="flex items-center gap-1">
+                    <p>{kdaRatio} KDA</p>
+                    <p className="hidden">{user?.totalMinionsKilled} CS</p>
+                    <p className="hidden">{user?.visionScore} Vision</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </AccordionTrigger>
-        <AccordionContent>
-          <div>
+        <AccordionContent
+          className={`${gameResult() === "WIN" ? "bg-matchCard-bg_win_detail" : "bg-matchCard-bg_loss_detail"}`}
+        >
+          <div className="flex gap-4">
             <div>Team 1</div>
             <div>Team 2</div>
           </div>
