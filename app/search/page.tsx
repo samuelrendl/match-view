@@ -40,7 +40,7 @@ const page = async ({ searchParams }: PageProps) => {
   return (
     <>
       <Navbar />
-      <div className="mx-4">
+      <div className="mx-4 font-poppins">
         <div className="flex items-center gap-4">
           <Image
             src={`https://ddragon.leagueoflegends.com/cdn/${gameVersion}/img/profileicon/

@@ -129,12 +129,16 @@ const MatchCard = async ({
             {/* Match summary */}
             <div className="flex justify-between">
               <p>
-                {gameResult()}
+                <span
+                  className={`font-bold ${gameResult() === "WIN" ? "text-secondary" : "text-matchCard-death"}`}
+                >
+                  {gameResult()}
+                </span>
                 <span className="hidden">- {formatedGameDuration}</span>
               </p>
-              <div className="flex gap-2 text-xs">
-                <p>{gameType}</p>
-                <p>{howLongAgo}</p>
+              <div className="flex items-center justify-center gap-2 text-xs">
+                <p className="font-bold">{gameType}</p>
+                <p className="text-[10px] font-light">{howLongAgo}</p>
                 <p className="hidden">25 LP</p>
               </div>
             </div>
@@ -144,7 +148,7 @@ const MatchCard = async ({
               {/* Left side - champion, summoners, runes */}
               <div className="flex justify-between gap-0.5">
                 {/* Champion */}
-                <div className="relative">
+                <div className="relative drop-shadow-lg">
                   <Image
                     src={`https://ddragon.leagueoflegends.com/cdn/${shorterGameVersion}/img/champion/${user?.championName}.png`}
                     alt={`${user?.championName}`}
@@ -216,7 +220,9 @@ const MatchCard = async ({
                 {/* KDA + CS */}
                 <div className="ml-auto mr-0 flex gap-4 text-xs">
                   <p>
-                    {user?.kills} / {user?.assists} / {user?.deaths}
+                    {user?.kills} /{" "}
+                    <span className="text-matchCard-death">{user?.deaths}</span>{" "}
+                    / {user?.assists}
                   </p>
                   <div className="flex items-center gap-1">
                     <p>{kdaRatio} KDA</p>
