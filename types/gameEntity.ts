@@ -37,10 +37,21 @@ export interface SummonerSpellEntity extends BaseEntity {
   };
 }
 
-export type GameEntity = ItemEntity | RuneEntity | SummonerSpellEntity;
+export interface AugmentEntity extends BaseEntity {
+  id: number;
+  desc: string;
+  iconLarge: string;
+  iconSmall: string;
+}
+
+export type GameEntity =
+  | ItemEntity
+  | RuneEntity
+  | SummonerSpellEntity
+  | AugmentEntity;
 
 export interface GameEntityProps {
-  entity: GameEntity;
+  entity: GameEntity | null | undefined;
   gameVersion: string;
-  type: "item" | "rune" | "summoner";
+  type: "item" | "rune" | "summoner" | "augment";
 }

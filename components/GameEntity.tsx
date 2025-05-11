@@ -11,6 +11,7 @@ import {
   ItemEntity,
   RuneEntity,
   SummonerSpellEntity,
+  AugmentEntity,
 } from "../types/gameEntity";
 
 function GameEntity({ entity, gameVersion, type }: GameEntityProps) {
@@ -25,6 +26,8 @@ function GameEntity({ entity, gameVersion, type }: GameEntityProps) {
     "shortDesc" in e && "longDesc" in e;
   const isSummonerSpell = (e: GameEntity): e is SummonerSpellEntity =>
     "cooldown" in e;
+  const isAugment = (e: GameEntity): e is AugmentEntity =>
+    "id" in e && "desc" in e;
 
   // Get image path based on type
   const getImagePath = () => {
@@ -35,6 +38,8 @@ function GameEntity({ entity, gameVersion, type }: GameEntityProps) {
         return `img/${(entity as RuneEntity).icon}`;
       case "summoner":
         return `${gameVersion}/img/spell/${(entity as SummonerSpellEntity).image.full}`;
+      case "augment":
+        return `${(entity as AugmentEntity).iconLarge}`;
       default:
         return "";
     }
@@ -43,9 +48,13 @@ function GameEntity({ entity, gameVersion, type }: GameEntityProps) {
   return (
     <HoverCard>
       <HoverCardTrigger>
-        <div className="rounded-sm bg-black/30">
+        <div className="rounded-sm drop-shadow-lg bg-black/30">
           <Image
-            src={`https://ddragon.leagueoflegends.com/cdn/${getImagePath()}`}
+            src={
+              type === "augment"
+                ? `https://raw.communitydragon.org/latest/game/${getImagePath()}`
+                : `https://ddragon.leagueoflegends.com/cdn/${getImagePath()}`
+            }
             width={20}
             height={20}
             alt={entity.name}
@@ -75,6 +84,11 @@ function GameEntity({ entity, gameVersion, type }: GameEntityProps) {
             <>
               <p dangerouslySetInnerHTML={{ __html: entity.description }} />
               <p>Cooldown: {entity.cooldown.join("/")}s</p>
+            </>
+          )}
+          {isAugment(entity) && (
+            <>
+              <p dangerouslySetInnerHTML={{ __html: entity.desc }} />
             </>
           )}
         </div>

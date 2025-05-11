@@ -1,4 +1,5 @@
 import {
+  findAugmentById,
   findRuneOrTreeById,
   findSummonerByKey,
   formatGameDuration,
@@ -13,6 +14,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import {
+  fetchAugments,
   fetchItems,
   fetchQueueId,
   fetchRunes,
@@ -74,8 +76,8 @@ const MatchCard = async ({
   const fetchedItems = await fetchItems(shorterGameVersion);
   const fetchedSummoners = await fetchSummonerSpells(shorterGameVersion);
   const fetchedRunes = await fetchRunes(shorterGameVersion);
-
   const gameType = await fetchQueueId(queueId, gameMode);
+  const fetchedAugments = await fetchAugments();
 
   const items = [
     user?.item0,
@@ -87,11 +89,27 @@ const MatchCard = async ({
     user?.item6,
   ];
 
+  const playerAugment1 = findAugmentById(
+    user?.playerAugment1 ?? 0,
+    fetchedAugments
+  );
+  const playerAugment2 = findAugmentById(
+    user?.playerAugment2 ?? 0,
+    fetchedAugments
+  );
+  const playerAugment3 = findAugmentById(
+    user?.playerAugment3 ?? 0,
+    fetchedAugments
+  );
+  const playerAugment4 = findAugmentById(
+    user?.playerAugment4 ?? 0,
+    fetchedAugments
+  );
+
   const primaryRune = findRuneOrTreeById(
     user?.perks.styles[0].selections[0].perk ?? 0,
     fetchedRunes
   );
-
   const secondaryRune = findRuneOrTreeById(
     user?.perks.styles[1].style ?? 0,
     fetchedRunes
@@ -125,110 +143,187 @@ const MatchCard = async ({
     >
       <AccordionItem value="item-1" className="mx-2 border-none">
         <AccordionTrigger className="py-2 hover:no-underline">
-          <div className="flex w-full flex-col gap-2">
-            {/* Match summary */}
-            <div className="flex justify-between">
-              <p>
-                <span
-                  className={`font-bold ${gameResult() === "WIN" ? "text-secondary" : "text-matchCard-death"}`}
-                >
-                  {gameResult()}
-                </span>
-                <span className="hidden">- {formatedGameDuration}</span>
-              </p>
-              <div className="flex items-center justify-center gap-2 text-xs">
-                <p className="font-bold">{gameType}</p>
-                <p className="text-[10px] font-light">{howLongAgo}</p>
-                <p className="hidden">25 LP</p>
-              </div>
-            </div>
-
-            {/* Champ & details row */}
-            <div className="flex justify-between">
-              {/* Left side - champion, summoners, runes */}
-              <div className="flex justify-between gap-0.5">
-                {/* Champion */}
-                <div className="relative drop-shadow-lg">
-                  <Image
-                    src={`https://ddragon.leagueoflegends.com/cdn/${shorterGameVersion}/img/champion/${user?.championName}.png`}
-                    alt={`${user?.championName}`}
-                    width={42}
-                    height={42}
-                    className="rounded object-contain"
-                  />
-                  <div className="absolute bottom-0 left-0 w-4 rounded-sm bg-black/50 text-center text-[10px] font-bold leading-snug text-white">
-                    {user?.champLevel}
-                  </div>
-                </div>
-
-                <div className="flex gap-0.5">
-                  {/* Summoners */}
-                  <div className="flex flex-col justify-between">
-                    <GameEntity
-                      entity={summonerOne}
-                      type="summoner"
-                      gameVersion={shorterGameVersion}
-                    />
-                    <GameEntity
-                      entity={summonerTwo}
-                      type="summoner"
-                      gameVersion={shorterGameVersion}
-                    />
-                  </div>
-                  {/* Runes */}
-                  <div className="flex flex-col justify-between">
-                    {primaryRune && "longDesc" in primaryRune ? (
-                      <GameEntity
-                        entity={primaryRune}
-                        type="rune"
-                        gameVersion={shorterGameVersion}
-                      />
-                    ) : (
-                      <div /> // fallback empty cell if no rune
-                    )}
-
-                    <GameEntity
-                      entity={{
-                        ...secondaryRune,
-                        icon: secondaryRune.icon,
-                      }}
-                      type="rune"
-                      gameVersion={shorterGameVersion}
-                    />
-                  </div>
+          <div className="w-full">
+            <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-between">
+              {/* Match summary */}
+              <div className="flex justify-between sm:flex-col">
+                <p>
+                  <span
+                    className={`font-bold drop-shadow-md ${gameResult() === "WIN" ? "text-secondary" : "text-matchCard-death"}`}
+                  >
+                    {gameResult()}
+                  </span>
+                  <span className="font-light"> - {formatedGameDuration}</span>
+                </p>
+                <div className="flex items-center justify-center gap-2 text-xs sm:flex-col sm:gap-0">
+                  <p className="font-bold">{gameType}</p>
+                  <p className="text-[10px] font-light">{howLongAgo}</p>
+                  <p className="">25 LP</p>
                 </div>
               </div>
 
-              {/* Right side - items & stats */}
-              <div className="flex flex-col justify-between">
-                {/* Items */}
-                <div className="grid grid-flow-col gap-0.5">
-                  {items.map((item, index) => (
-                    <div
-                      key={`item-${index}`}
-                      className="relative size-5 rounded-sm bg-black/50"
-                    >
-                      <GameEntity
-                        entity={fetchedItems[item!]}
-                        gameVersion={shorterGameVersion}
-                        type="item"
-                      />
+              {/* Champ & details row */}
+              <div className="flex justify-between items-center sm:gap-6">
+                {/* Left side - champion, summoners, runes */}
+                <div className=" flex justify-between gap-0.5">
+                  {/* Champion */}
+                  <div className="relative drop-shadow-lg">
+                    <Image
+                      src={`https://ddragon.leagueoflegends.com/cdn/${shorterGameVersion}/img/champion/${user?.championName}.png`}
+                      alt={`${user?.championName}`}
+                      width={42}
+                      height={42}
+                      className="rounded object-contain"
+                    />
+                    <div className="absolute bottom-0 left-0 w-4 rounded-sm bg-black/50 text-center text-[10px] font-bold leading-snug text-white">
+                      {user?.champLevel}
                     </div>
-                  ))}
+                  </div>
+                  <div className="flex gap-0.5">
+                    {/* Summoners */}
+                    <div className="flex flex-col gap-0.5">
+                      <div className="size-5 rounded-sm bg-black/50">
+                        <GameEntity
+                          entity={
+                            gameType === "Arena" ? playerAugment1 : summonerOne
+                          }
+                          type={gameType === "Arena" ? "augment" : "summoner"}
+                          gameVersion={shorterGameVersion}
+                        />
+                      </div>
+                      <div className="size-5 rounded-sm bg-black/50">
+                        <GameEntity
+                          entity={
+                            gameType === "Arena" ? playerAugment2 : summonerTwo
+                          }
+                          type={gameType === "Arena" ? "augment" : "summoner"}
+                          gameVersion={shorterGameVersion}
+                        />
+                      </div>
+                    </div>
+                    {/* Runes */}
+                    <div className="flex flex-col gap-0.5">
+                      <div className="size-5 rounded-sm bg-black/50">
+                        <GameEntity
+                          entity={
+                            gameType === "Arena" ? playerAugment3 : primaryRune
+                          }
+                          type={gameType === "Arena" ? "augment" : "rune"}
+                          gameVersion={shorterGameVersion}
+                        />
+                      </div>
+                      <div className="size-5 rounded-sm bg-black/50">
+                        <GameEntity
+                          entity={
+                            gameType === "Arena"
+                              ? playerAugment4
+                              : secondaryRune
+                                ? { ...secondaryRune, icon: secondaryRune.icon }
+                                : null // Fallback to null if secondaryRune is undefined
+                          }
+                          type={gameType === "Arena" ? "augment" : "rune"}
+                          gameVersion={shorterGameVersion}
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                {/* KDA + CS */}
-                <div className="ml-auto mr-0 flex gap-4 text-xs">
-                  <p>
-                    {user?.kills} /{" "}
-                    <span className="text-matchCard-death">{user?.deaths}</span>{" "}
-                    / {user?.assists}
-                  </p>
-                  <div className="flex items-center gap-1">
-                    <p>{kdaRatio} KDA</p>
-                    <p className="hidden">{user?.totalMinionsKilled} CS</p>
-                    <p className="hidden">{user?.visionScore} Vision</p>
+                {/* Right side - items & stats */}
+                <div className="flex flex-col gap-2 sm:flex-row sm:gap-6">
+                  {/* Items */}
+                  {/* Mobile */}
+                  <div className="grid grid-flow-col gap-0.5 sm:hidden">
+                    {items.map((item, index) => (
+                      <div
+                        key={`item-${index}`}
+                        className="relative size-5 rounded-sm bg-black/50"
+                      >
+                        <GameEntity
+                          entity={fetchedItems[item!]}
+                          gameVersion={shorterGameVersion}
+                          type="item"
+                        />
+                      </div>
+                    ))}
                   </div>
+
+                  {/* Tablet and bigger */}
+                  <div className="hidden sm:flex sm:flex-col sm:justify-center sm:gap-0.5 sm:w-fit">
+                    {/* top row: items 1,2,3 and then 7 */}
+                    <div className="flex gap-0.5">
+                      {[0, 1, 2, 6].map((i) => (
+                        <div
+                          key={`item-${i}`}
+                          className="relative size-5 rounded-sm bg-black/50"
+                        >
+                          <GameEntity
+                            entity={fetchedItems[items[i]!]}
+                            gameVersion={shorterGameVersion}
+                            type="item"
+                          />
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* bottom row: items 4,5,6 */}
+                    <div className="flex gap-0.5">
+                      {[3, 4, 5].map((i) => (
+                        <div
+                          key={`item-${i}`}
+                          className="relative size-5 rounded-sm bg-black/50"
+                        >
+                          <GameEntity
+                            entity={fetchedItems[items[i]!]}
+                            gameVersion={shorterGameVersion}
+                            type="item"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* KDA + CS */}
+                  <div className="ml-auto mr-0 flex gap-3 text-xs sm:flex-col sm:gap-0.5">
+                    <p className="font-semibold">
+                      {user?.kills}{" "}
+                      <span className="font-light text-neutral-500">/</span>{" "}
+                      <span className="text-matchCard-death">
+                        {user?.deaths}
+                      </span>{" "}
+                      <span className="font-light text-neutral-500">/</span>{" "}
+                      {user?.assists}
+                    </p>
+                    <div className="flex items-center gap-3 sm:flex-col sm:gap-0.5">
+                      <p className="font-semibold">
+                        {kdaRatio} <span className="font-light">KDA</span>
+                      </p>
+                      <p className="">
+                        {user?.totalMinionsKilled}{" "}
+                        <span className="font-light">CS</span>
+                      </p>
+                      <p className="max-sm:hidden">
+                        {user?.visionScore}{" "}
+                        <span className="font-light">vision</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="max-sm:hidden flex gap-2 text-[10px] font-light leading-snug">
+                <div>
+                  <p>Player1</p>
+                  <p>Player1</p>
+                  <p>Player1</p>
+                  <p>Player1</p>
+                  <p>Player1</p>
+                </div>
+                <div>
+                  <p>Player1</p>
+                  <p>Player1</p>
+                  <p>Player1</p>
+                  <p>Player1</p>
+                  <p>Player1</p>
                 </div>
               </div>
             </div>

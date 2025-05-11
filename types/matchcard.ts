@@ -1,6 +1,8 @@
 export interface Participant {
   puuid: string;
   win: boolean;
+  teamId: number;
+  teamPosition: string;
   championName: string;
   champLevel: number;
   summoner1Id: number;
@@ -17,6 +19,12 @@ export interface Participant {
   item4: number;
   item5: number;
   item6: number;
+  playerAugment1: number;
+  playerAugment2: number;
+  playerAugment3: number;
+  playerAugment4: number;
+  playerAugment5: number;
+  playerAugment6: number;
   perks: {
     styles: {
       selections: {

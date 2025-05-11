@@ -1,6 +1,11 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { RuneEntity, RuneTree, SummonerSpellEntity } from "../types/gameEntity";
+import {
+  AugmentEntity,
+  RuneEntity,
+  RuneTree,
+  SummonerSpellEntity,
+} from "../types/gameEntity";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -40,13 +45,16 @@ export const splitUsername = (username: string) => {
 };
 
 export const kdaRatioCal = (kills: number, assists: number, deaths: number) => {
-  return (kills + assists) / deaths;
+  return Number((kills + assists) / deaths).toFixed(2);
 };
 
 export const findRuneOrTreeById = (
-  id: string | number,
+  id: string | number | undefined | null,
   runeTrees: RuneTree[]
-): RuneTree | RuneEntity => {
+): RuneTree | RuneEntity | null => {
+  if (id === 0 || id === undefined || id === null) {
+    return null;
+  }
   const searchId = typeof id === "string" ? parseInt(id, 10) : id;
 
   const tree = runeTrees.find((tree) => tree.id === searchId);
@@ -82,8 +90,27 @@ export const findSummonerByKey = (
   return spell;
 };
 
+export const findAugmentById = (
+  id: number | undefined | null,
+  augmentsData: { augments: Record<string, AugmentEntity> }
+): AugmentEntity | null => {
+  if (id === 0 || id === undefined || id === null) {
+    return null;
+  }
+
+  const augment = Object.values(augmentsData.augments).find(
+    (augment) => augment.id === id
+  );
+
+  if (!augment) {
+    throw new Error(`No augment found with ID ${id}`);
+  }
+
+  return augment;
+};
+
 export const formatGameDuration = (seconds: number): string => {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
-  return `${mins}:${secs.toString().padStart(2, '0')}`;
+  return `${mins}:${secs.toString().padStart(2, "0")}`;
 };

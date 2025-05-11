@@ -60,7 +60,7 @@ export const fetchSummoner = async (puuid: string, region = "eun1") => {
 
 export const fetchMatchHistory = async (puuid: string, region = "europe") => {
   const response = await fetch(
-    `https://${region}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=20`,
+    `https://${region}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=10`,
     {
       headers: { "X-Riot-Token": process.env.RIOT_API_KEY! },
     }
@@ -152,6 +152,14 @@ export const fetchSummonerSpells = async (gameVersion: string) => {
 export const fetchRunes = async (gameVersion: string) => {
   const response = await fetch(
     `https://ddragon.leagueoflegends.com/cdn/${gameVersion}/data/en_US/runesReforged.json`
+  );
+  if (!response.ok) throw new Error("Failed to fetch runes");
+  return await response.json();
+};
+
+export const fetchAugments = async () => {
+  const response = await fetch(
+    `https://raw.communitydragon.org/latest/cdragon/arena/en_us.json`
   );
   if (!response.ok) throw new Error("Failed to fetch runes");
   return await response.json();
