@@ -1,5 +1,7 @@
 export interface Participant {
   puuid: string;
+  riotIdGameName: string;
+  riotIdTagline: string;
   win: boolean;
   teamId: number;
   teamPosition: string;

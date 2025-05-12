@@ -310,20 +310,48 @@ const MatchCard = async ({
                   </div>
                 </div>
               </div>
-              <div className="max-sm:hidden flex gap-2 text-[10px] font-light leading-snug">
-                <div>
-                  <p>Player1</p>
-                  <p>Player1</p>
-                  <p>Player1</p>
-                  <p>Player1</p>
-                  <p>Player1</p>
+              <div className="max-sm:hidden flex gap-2 text-[8px] font-light leading-snug">
+                <div className="flex flex-col gap-0.5">
+                  {participants
+                    .filter((participant) => participant.teamId === 100)
+                    .map((participant, index) => (
+                      <div key={index} className="flex gap-0.5 w-16">
+                        <Image
+                          src={`https://ddragon.leagueoflegends.com/cdn/${shorterGameVersion}/img/champion/${participant.championName}.png`}
+                          alt={`${participant.championName}`}
+                          width={15}
+                          height={15}
+                        />
+                        <a
+                          href={`/search?username=${participant.riotIdGameName}%23${participant.riotIdTagline}`}
+                          target="_blank"
+                          className={`${participant.puuid === userPuuid ? "font-bold" : ""} truncate z-auto hover:underline hover:font-bold`}
+                        >
+                          {participant.riotIdGameName}
+                        </a>
+                      </div>
+                    ))}
                 </div>
-                <div>
-                  <p>Player1</p>
-                  <p>Player1</p>
-                  <p>Player1</p>
-                  <p>Player1</p>
-                  <p>Player1</p>
+                <div className="flex flex-col gap-0.5">
+                  {participants
+                    .filter((participant) => participant.teamId === 200)
+                    .map((participant, index) => (
+                      <div key={index} className="flex gap-0.5 w-16">
+                        <Image
+                          src={`https://ddragon.leagueoflegends.com/cdn/${shorterGameVersion}/img/champion/${participant.championName}.png`}
+                          alt={`${participant.championName}`}
+                          width={15}
+                          height={15}
+                        />
+                        <a
+                          href={`/search?username=${participant.riotIdGameName}%23${participant.riotIdTagline}`}
+                          target="_blank"
+                          className={`${participant.puuid === userPuuid ? "font-bold" : ""} truncate z-auto hover:underline hover:font-bold`}
+                        >
+                          {participant.riotIdGameName}
+                        </a>
+                      </div>
+                    ))}
                 </div>
               </div>
             </div>
