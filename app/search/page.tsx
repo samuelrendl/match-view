@@ -33,10 +33,7 @@ const page = async ({ searchParams }: PageProps) => {
   const matches = await Promise.all(
     matchIds.map((matchId: string) => fetchMatchDetails(matchId))
   );
-  // const match1 = await fetchMatchDetails("EUN1_3769864828");
-  // const match2 = await fetchMatchDetails("EUN1_3769858454");
-  // const match3 = await fetchMatchDetails("EUN1_3769716638");
-  console.log(matches);
+  
   return (
     <>
       <Navbar />
@@ -64,9 +61,6 @@ ${summoner.profileIconId}.png`}
           {matches.map((match, index) => (
             <MatchCard key={index} userPuuid={account.puuid} params={match} />
           ))}
-          {/* <MatchCard userPuuid={account.puuid} params={match1} />
-          <MatchCard userPuuid={account.puuid} params={match2} />
-          <MatchCard userPuuid={account.puuid} params={match3} /> */}
         </div>
       </div>
     </>
