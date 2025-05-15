@@ -6,6 +6,7 @@ import {
   RuneTree,
   SummonerSpellEntity,
 } from "../types/gameEntity";
+import { Participant } from "@/types/matchcard";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -113,4 +114,26 @@ export const formatGameDuration = (seconds: number): string => {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
   return `${mins}:${secs.toString().padStart(2, "0")}`;
+};
+
+export const groupAndSortTeams = ({
+  participants,
+}: {
+  participants: Participant[];
+}) => {
+  const placementMap: Record<number, Participant[]> = {};
+
+  for (const player of participants) {
+    if (!placementMap[player.placement]) {
+      placementMap[player.placement] = [];
+    }
+    placementMap[player.placement].push(player);
+  }
+
+  const sortedTeams: Participant[][] = Object.keys(placementMap)
+    .map(Number)
+    .sort((a, b) => a - b)
+    .map((placement) => placementMap[placement]);
+
+  return sortedTeams;
 };

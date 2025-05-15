@@ -3,6 +3,7 @@ import {
   findRuneOrTreeById,
   findSummonerByKey,
   formatGameDuration,
+  groupAndSortTeams,
   kdaRatioCal,
   timeAgo,
 } from "@/lib/utils";
@@ -22,7 +23,8 @@ import {
 } from "@/utils/api";
 import Image from "next/image";
 import GameEntity from "./GameEntity";
-import Team from "./Team";
+import Team from "./Player";
+import Teams from "./Teams";
 
 const findUserByPUUID = (
   userPuuid: string,
@@ -51,8 +53,8 @@ const MatchCard = async ({
 
   const howLongAgo = timeAgo(gameCreation);
 
-  // Find the matching user in the participants array
   const user = findUserByPUUID(userPuuid, participants);
+
   const kdaRatio = kdaRatioCal(
     user?.kills ?? 0,
     user?.assists ?? 0,
@@ -62,13 +64,11 @@ const MatchCard = async ({
   const shortenGameVersion = (gameVersion: string): string => {
     const parts = gameVersion.split(".");
 
-    // Make sure we at least have major and minor version parts
     if (parts.length < 2) {
       throw new Error("Invalid version format");
     }
 
     const [major, minor] = parts;
-    // Here we set the patch number to "1" regardless of the build or revision.
     return `${major}.${minor}.1`;
   };
 
@@ -136,6 +136,8 @@ const MatchCard = async ({
 
   const formatedGameDuration = formatGameDuration(gameDuration);
 
+  const arenaTeams = groupAndSortTeams({ participants });
+
   return (
     <Accordion
       type="single"
@@ -147,19 +149,22 @@ const MatchCard = async ({
           <div className="w-full">
             <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-between">
               {/* Match summary */}
-              <div className="flex justify-between sm:flex-col">
-                <p>
+              <div className="flex justify-between sm:flex-col sm:justify-center sm:items-center">
+                <p className="sm:flex sm:flex-col">
                   <span
                     className={`font-bold drop-shadow-md ${gameResult() === "WIN" ? "text-secondary" : "text-matchCard-death"}`}
                   >
                     {gameResult()}
                   </span>
-                  <span className="font-light"> - {formatedGameDuration}</span>
+                  <span className="font-light sm:hidden"> - </span>
+                  <span className="font-light">{formatedGameDuration}</span>
                 </p>
                 <div className="flex items-center justify-center gap-2 text-xs sm:flex-col sm:gap-0">
                   <p className="font-bold">{gameType}</p>
+                  <p className="">
+                    {user?.placement! > 0 ? `${user?.placement}th` : ""}
+                  </p>
                   <p className="text-[10px] font-light">{howLongAgo}</p>
-                  <p className="">25 LP</p>
                 </div>
               </div>
 
@@ -231,7 +236,9 @@ const MatchCard = async ({
                 </div>
 
                 {/* Right side - items & stats */}
-                <div className="flex flex-col gap-2 sm:flex-row sm:gap-6">
+                <div
+                  className={`${gameType === "Arena" ? "flex flex-col gap-2 sm:flex-col-reverse sm:gap-2 sm:justify-center sm:items-center" : "flex flex-col gap-2 sm:flex-row sm:gap-6"}`}
+                >
                   {/* Items */}
                   {/* Mobile */}
                   <div className="grid grid-flow-col gap-0.5 sm:hidden">
@@ -285,7 +292,7 @@ const MatchCard = async ({
                   </div>
 
                   {/* KDA + CS */}
-                  <div className="ml-auto mr-0 flex gap-3 text-xs sm:flex-col sm:gap-0.5">
+                  <div className="ml-auto mr-0 flex gap-3 text-xs sm:flex-col sm:ml-0 sm:gap-0.5">
                     <p className="font-semibold">
                       {user?.kills}{" "}
                       <span className="font-light text-neutral-500">/</span>{" "}
@@ -299,11 +306,13 @@ const MatchCard = async ({
                       <p className="font-semibold">
                         {kdaRatio} <span className="font-light">KDA</span>
                       </p>
-                      <p className="">
+                      <p className={`${gameType === "Arena" ? "hidden" : ""}`}>
                         {user?.totalMinionsKilled}{" "}
                         <span className="font-light">CS</span>
                       </p>
-                      <p className="max-sm:hidden">
+                      <p
+                        className={`max-sm:hidden ${gameType === "Arena" ? "hidden" : ""}`}
+                      >
                         {user?.visionScore}{" "}
                         <span className="font-light">vision</span>
                       </p>
@@ -312,30 +321,12 @@ const MatchCard = async ({
                 </div>
               </div>
               <div className="max-sm:hidden flex gap-2 text-[8px] font-light leading-snug">
-                <div className="flex flex-col gap-0.5">
-                  {participants
-                    .filter((participant) => participant.teamId === 100)
-                    .map((participant, index) => (
-                      <Team
-                        key={index}
-                        shorterGameVersion={shorterGameVersion}
-                        participant={participant}
-                        userPuuid={userPuuid}
-                      />
-                    ))}
-                </div>
-                <div className="flex flex-col gap-0.5">
-                  {participants
-                    .filter((participant) => participant.teamId === 200)
-                    .map((participant, index) => (
-                      <Team
-                        key={index}
-                        shorterGameVersion={shorterGameVersion}
-                        participant={participant}
-                        userPuuid={userPuuid}
-                      />
-                    ))}
-                </div>
+                <Teams
+                  gameType={gameType}
+                  participants={participants}
+                  shorterGameVersion={shorterGameVersion}
+                  userPuuid={userPuuid}
+                />
               </div>
             </div>
           </div>

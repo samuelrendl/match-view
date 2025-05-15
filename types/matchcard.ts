@@ -4,6 +4,7 @@ export interface Participant {
   riotIdTagline: string;
   win: boolean;
   teamId: number;
+  placement: number;
   teamPosition: string;
   championName: string;
   champLevel: number;
