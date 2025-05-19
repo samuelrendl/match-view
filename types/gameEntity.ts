@@ -15,16 +15,11 @@ export interface RuneEntity extends BaseEntity {
   key: string;
   shortDesc?: string;
   longDesc?: string;
+  slots?: Slot[];
 }
 
 export interface Slot {
   runes: RuneEntity[];
-}
-
-export interface RuneTree extends BaseEntity {
-  id: number;
-  key: string;
-  slots: Slot[];
 }
 
 export interface SummonerSpellEntity extends BaseEntity {

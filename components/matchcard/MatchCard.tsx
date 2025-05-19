@@ -1,13 +1,9 @@
 import {
-  findAugmentById,
-  findRuneOrTreeById,
-  findSummonerByKey,
   formatGameDuration,
-  groupAndSortTeams,
   kdaRatioCal,
   timeAgo,
 } from "@/lib/utils";
-import { Participant, MatchCardProps } from "../types/matchcard";
+import { Participant, MatchCardProps } from "../../types/matchcard";
 import {
   Accordion,
   AccordionContent,
@@ -21,10 +17,9 @@ import {
   fetchRunes,
   fetchSummonerSpells,
 } from "@/utils/api";
-import Image from "next/image";
-import GameEntity from "./GameEntity";
-import Team from "./Player";
+import GameEntity from "../GameEntity";
 import Teams from "./Teams";
+import ChampSetup from "./ChampSetup";
 
 const findUserByPUUID = (
   userPuuid: string,
@@ -50,17 +45,7 @@ const MatchCard = async ({
       participants,
     },
   } = params;
-
-  const howLongAgo = timeAgo(gameCreation);
-
   const user = findUserByPUUID(userPuuid, participants);
-
-  const kdaRatio = kdaRatioCal(
-    user?.kills ?? 0,
-    user?.assists ?? 0,
-    user?.deaths ?? 0
-  );
-
   const shortenGameVersion = (gameVersion: string): string => {
     const parts = gameVersion.split(".");
 
@@ -79,6 +64,13 @@ const MatchCard = async ({
   const fetchedRunes = await fetchRunes(shorterGameVersion);
   const gameType = await fetchQueueId(queueId, gameMode);
   const fetchedAugments = await fetchAugments();
+  const howLongAgo = timeAgo(gameCreation);
+
+  const kdaRatio = kdaRatioCal(
+    user?.kills ?? 0,
+    user?.assists ?? 0,
+    user?.deaths ?? 0
+  );
 
   const items = [
     user?.item0,
@@ -90,41 +82,6 @@ const MatchCard = async ({
     user?.item6,
   ];
 
-  const playerAugment1 = findAugmentById(
-    user?.playerAugment1 ?? 0,
-    fetchedAugments
-  );
-  const playerAugment2 = findAugmentById(
-    user?.playerAugment2 ?? 0,
-    fetchedAugments
-  );
-  const playerAugment3 = findAugmentById(
-    user?.playerAugment3 ?? 0,
-    fetchedAugments
-  );
-  const playerAugment4 = findAugmentById(
-    user?.playerAugment4 ?? 0,
-    fetchedAugments
-  );
-
-  const primaryRune = findRuneOrTreeById(
-    user?.perks.styles[0].selections[0].perk ?? 0,
-    fetchedRunes
-  );
-  const secondaryRune = findRuneOrTreeById(
-    user?.perks.styles[1].style ?? 0,
-    fetchedRunes
-  );
-
-  const summonerOne = findSummonerByKey(
-    user?.summoner1Id ?? 0,
-    fetchedSummoners
-  );
-  const summonerTwo = findSummonerByKey(
-    user?.summoner2Id ?? 0,
-    fetchedSummoners
-  );
-
   const gameResult = () => {
     const result = user?.win ?? false;
     if (result === true) {
@@ -135,8 +92,6 @@ const MatchCard = async ({
   };
 
   const formatedGameDuration = formatGameDuration(gameDuration);
-
-  const arenaTeams = groupAndSortTeams({ participants });
 
   return (
     <Accordion
@@ -171,73 +126,18 @@ const MatchCard = async ({
               {/* Champ & details row */}
               <div className="flex justify-between items-center sm:gap-6">
                 {/* Left side - champion, summoners, runes */}
-                <div className=" flex justify-between gap-0.5">
-                  {/* Champion */}
-                  <div className="relative drop-shadow-lg">
-                    <Image
-                      src={`https://ddragon.leagueoflegends.com/cdn/${shorterGameVersion}/img/champion/${user?.championName}.png`}
-                      alt={`${user?.championName}`}
-                      width={42}
-                      height={42}
-                      className="rounded object-contain"
-                    />
-                    <div className="absolute bottom-0 left-0 w-4 rounded-sm bg-black/50 text-center text-[10px] font-bold leading-snug text-white">
-                      {user?.champLevel}
-                    </div>
-                  </div>
-                  <div className="flex gap-0.5">
-                    {/* Summoners */}
-                    <div className="flex flex-col gap-0.5">
-                      <div className="size-5 rounded-sm bg-black/50">
-                        <GameEntity
-                          entity={
-                            gameType === "Arena" ? playerAugment1 : summonerOne
-                          }
-                          type={gameType === "Arena" ? "augment" : "summoner"}
-                          gameVersion={shorterGameVersion}
-                        />
-                      </div>
-                      <div className="size-5 rounded-sm bg-black/50">
-                        <GameEntity
-                          entity={
-                            gameType === "Arena" ? playerAugment2 : summonerTwo
-                          }
-                          type={gameType === "Arena" ? "augment" : "summoner"}
-                          gameVersion={shorterGameVersion}
-                        />
-                      </div>
-                    </div>
-                    {/* Runes */}
-                    <div className="flex flex-col gap-0.5">
-                      <div className="size-5 rounded-sm bg-black/50">
-                        <GameEntity
-                          entity={
-                            gameType === "Arena" ? playerAugment3 : primaryRune
-                          }
-                          type={gameType === "Arena" ? "augment" : "rune"}
-                          gameVersion={shorterGameVersion}
-                        />
-                      </div>
-                      <div className="size-5 rounded-sm bg-black/50">
-                        <GameEntity
-                          entity={
-                            gameType === "Arena"
-                              ? playerAugment4
-                              : secondaryRune
-                                ? { ...secondaryRune, icon: secondaryRune.icon }
-                                : null // Fallback to null if secondaryRune is undefined
-                          }
-                          type={gameType === "Arena" ? "augment" : "rune"}
-                          gameVersion={shorterGameVersion}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <ChampSetup
+                  shorterGameVersion={shorterGameVersion}
+                  gameType={gameType}
+                  player={user!}
+                  fetchedSummoners={fetchedSummoners}
+                  fetchedRunes={fetchedRunes}
+                  fetchedAugments={fetchedAugments}
+                />
 
                 {/* Right side - items & stats */}
                 <div
-                  className={`${gameType === "Arena" ? "flex flex-col gap-2 sm:flex-col-reverse sm:gap-2 sm:justify-center sm:items-center" : "flex flex-col gap-2 sm:flex-row sm:gap-6"}`}
+                  className={`flex flex-col gap-2 ${gameType === "Arena" ? "sm:flex-col-reverse sm:gap-2 sm:justify-center sm:items-center" : "sm:flex-row sm:gap-6"}`}
                 >
                   {/* Items */}
                   {/* Mobile */}
@@ -263,7 +163,7 @@ const MatchCard = async ({
                       {[0, 1, 2, 6].map((i) => (
                         <div
                           key={`item-${i}`}
-                          className="relative size-5 rounded-sm bg-black/50"
+                          className="relative rounded-sm bg-black/50 size-5 sm:size-6"
                         >
                           <GameEntity
                             entity={fetchedItems[items[i]!]}
@@ -279,7 +179,7 @@ const MatchCard = async ({
                       {[3, 4, 5].map((i) => (
                         <div
                           key={`item-${i}`}
-                          className="relative size-5 rounded-sm bg-black/50"
+                          className="relative rounded-sm bg-black/50 size-5 sm:size-6"
                         >
                           <GameEntity
                             entity={fetchedItems[items[i]!]}
@@ -335,7 +235,9 @@ const MatchCard = async ({
           className={`${gameResult() === "WIN" ? "bg-matchCard-bg_win_detail" : "bg-matchCard-bg_loss_detail"}`}
         >
           <div className="flex gap-4">
-            <div>Team 1</div>
+            <div>
+              Team 1
+            </div>
             <div>Team 2</div>
           </div>
         </AccordionContent>

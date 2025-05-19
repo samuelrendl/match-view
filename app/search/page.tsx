@@ -9,7 +9,7 @@ import {
   fetchSummoner,
   fetchMatchDetails,
 } from "@/utils/api";
-import MatchCard from "@/components/MatchCard";
+import MatchCard from "@/components/matchcard/MatchCard";
 
 interface PageProps {
   searchParams: { username?: string };
@@ -33,11 +33,11 @@ const page = async ({ searchParams }: PageProps) => {
   const matches = await Promise.all(
     matchIds.map((matchId: string) => fetchMatchDetails(matchId))
   );
-  
+
   return (
     <>
       <Navbar />
-      <div className="font-poppins max-w-xl mx-4 sm:mx-auto content-center">
+      <div className="font-poppins max-w-2xl  mx-4 sm:mx-auto content-center">
         <div className="flex items-center gap-2 mb-2">
           <div className="relative">
             <Image

@@ -31,10 +31,6 @@ export const timeAgo = (timestamp: number) => {
   return `${years} year${years !== 1 ? "s" : ""} ago`;
 };
 
-// Example usage:
-// const timestamp = 1737051353154; // Replace with your timestamp
-// console.log(timeAgo(timestamp));
-
 export const splitUsername = (username: string) => {
   if (!username.includes("#")) {
     throw new Error(
@@ -93,15 +89,11 @@ export const findSummonerByKey = (
 
 export const findAugmentById = (
   id: number | undefined | null,
-  augmentsData: { augments: Record<string, AugmentEntity> }
+  augmentsData: { augments: AugmentEntity[] }
 ): AugmentEntity | null => {
-  if (id === 0 || id === undefined || id === null) {
-    return null;
-  }
+  if (!id) return null;
 
-  const augment = Object.values(augmentsData.augments).find(
-    (augment) => augment.id === id
-  );
+  const augment = augmentsData.augments.find((augment) => augment.id === id);
 
   if (!augment) {
     throw new Error(`No augment found with ID ${id}`);

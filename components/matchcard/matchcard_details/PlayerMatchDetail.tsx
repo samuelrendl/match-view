@@ -1,7 +1,7 @@
 import Image from "next/image";
-import { Participant } from "../types/matchcard";
+import { Participant } from "../../../types/matchcard";
 
-const Team = ({
+const PlayerMatchDetail = ({
   shorterGameVersion,
   participant,
   userPuuid,
@@ -29,4 +29,4 @@ const Team = ({
   );
 };
 
-export default Team;
+export default PlayerMatchDetail;

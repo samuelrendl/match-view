@@ -48,15 +48,15 @@ function GameEntity({ entity, gameVersion, type }: GameEntityProps) {
   return (
     <HoverCard>
       <HoverCardTrigger>
-        <div className="rounded-sm drop-shadow-lg bg-black/30">
+        <div className="rounded-sm drop-shadow-lg">
           <Image
             src={
               type === "augment"
                 ? `https://raw.communitydragon.org/latest/game/${getImagePath()}`
                 : `https://ddragon.leagueoflegends.com/cdn/${getImagePath()}`
             }
-            width={20}
-            height={20}
+            width={42}
+            height={42}
             alt={entity.name}
             className="rounded-sm object-contain"
           />
