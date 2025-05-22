@@ -3,7 +3,6 @@ import { twMerge } from "tailwind-merge";
 import {
   AugmentEntity,
   RuneEntity,
-  RuneTree,
   SummonerSpellEntity,
 } from "../types/gameEntity";
 import { Participant } from "@/types/matchcard";
@@ -47,8 +46,8 @@ export const kdaRatioCal = (kills: number, assists: number, deaths: number) => {
 
 export const findRuneOrTreeById = (
   id: string | number | undefined | null,
-  runeTrees: RuneTree[]
-): RuneTree | RuneEntity | null => {
+  runeTrees: RuneEntity[]
+): RuneEntity | null => {
   if (id === 0 || id === undefined || id === null) {
     return null;
   }
@@ -58,7 +57,7 @@ export const findRuneOrTreeById = (
   if (tree) return tree;
 
   const allRunes = runeTrees.flatMap((tree) =>
-    tree.slots.flatMap((slot) => slot.runes)
+    tree.slots!.flatMap((slot) => slot.runes)
   );
 
   const rune = allRunes.find((rune) => rune.id === searchId);
@@ -128,4 +127,19 @@ export const groupAndSortTeams = ({
     .map((placement) => placementMap[placement]);
 
   return sortedTeams;
+};
+
+export const groupByPlacement = (group: Participant[]) => {
+  const map: Record<number, Participant[]> = {};
+  for (const player of group) {
+    if (!map[player.placement]) {
+      map[player.placement] = [];
+    }
+    map[player.placement].push(player);
+  }
+
+  return Object.keys(map)
+    .map(Number)
+    .sort((a, b) => a - b)
+    .map((placement) => map[placement]);
 };

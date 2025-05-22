@@ -1,4 +1,5 @@
 import Player from "@/components/matchcard/Player";
+import { groupByPlacement } from "@/lib/utils";
 import { Participant } from "@/types/matchcard";
 
 const Teams = ({
@@ -12,29 +13,13 @@ const Teams = ({
   shorterGameVersion: string;
   userPuuid: string;
 }) => {
-  // Step 1: Filter winners and losers
+  
   const winners = participants.filter(
     (p) => p.placement >= 1 && p.placement <= 4
   );
   const losers = participants.filter(
     (p) => p.placement >= 5 && p.placement <= 8
   );
-
-  // Step 2: Group by placement
-  const groupByPlacement = (group: Participant[]) => {
-    const map: Record<number, Participant[]> = {};
-    for (const player of group) {
-      if (!map[player.placement]) {
-        map[player.placement] = [];
-      }
-      map[player.placement].push(player);
-    }
-
-    return Object.keys(map)
-      .map(Number)
-      .sort((a, b) => a - b)
-      .map((placement) => map[placement]);
-  };
 
   const winnerTeams = groupByPlacement(winners);
   const loserTeams = groupByPlacement(losers);

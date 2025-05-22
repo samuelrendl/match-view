@@ -1,8 +1,4 @@
-import {
-  formatGameDuration,
-  kdaRatioCal,
-  timeAgo,
-} from "@/lib/utils";
+import { formatGameDuration, kdaRatioCal, timeAgo } from "@/lib/utils";
 import { Participant, MatchCardProps } from "../../types/matchcard";
 import {
   Accordion,
@@ -20,6 +16,7 @@ import {
 import GameEntity from "../GameEntity";
 import Teams from "./Teams";
 import ChampSetup from "./ChampSetup";
+import TeamsMatchDetails from "./matchcard_details/TeamsMatchDetails";
 
 const findUserByPUUID = (
   userPuuid: string,
@@ -234,11 +231,17 @@ const MatchCard = async ({
         <AccordionContent
           className={`${gameResult() === "WIN" ? "bg-matchCard-bg_win_detail" : "bg-matchCard-bg_loss_detail"}`}
         >
-          <div className="flex gap-4">
-            <div>
-              Team 1
-            </div>
-            <div>Team 2</div>
+          <div className="">
+            <TeamsMatchDetails
+              shorterGameVersion={shorterGameVersion}
+              gameType={gameType}
+              participants={participants}
+              userPuuid={userPuuid}
+              fetchedSummoners={fetchedSummoners}
+              fetchedAugments={fetchedAugments}
+              fetchedRunes={fetchedRunes}
+              fetchedItems={fetchedItems}
+            />
           </div>
         </AccordionContent>
       </AccordionItem>
