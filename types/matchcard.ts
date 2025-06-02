@@ -16,6 +16,7 @@ export interface Participant {
   totalDamageDealtToChampions: number;
   totalMinionsKilled: number;
   visionScore: number;
+  goldEarned: number;
   item0: number;
   item1: number;
   item2: number;
@@ -47,6 +48,10 @@ export interface MatchInfo {
   gameMode: string;
   gameVersion: string;
   participants: Participant[];
+  teams: {
+    teamId: number;
+    win: boolean;
+  }[];
 }
 
 export interface MatchCardProps {

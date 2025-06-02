@@ -4,26 +4,24 @@ import GameEntity from "../GameEntity";
 
 const Items = ({
   shorterGameVersion,
-  gameType,
   items,
   fetchedItems,
+  size = "lg",
 }: {
   shorterGameVersion: string;
-  gameType: string;
   items: number[];
   fetchedItems: Record<number, ItemEntity>;
+  size?: "sm" | "lg";
 }) => {
   return (
-    <div
-      className={`flex flex-col gap-2 ${gameType === "Arena" ? "sm:flex-col-reverse sm:gap-2 sm:justify-center sm:items-center" : "sm:flex-row sm:gap-6"}`}
-    >
+    <>
       {/* Items */}
       {/* Mobile */}
       <div className="grid grid-flow-col gap-0.5 sm:hidden">
         {items.map((item, index) => (
           <div
             key={`item-${index}`}
-            className="relative size-5 rounded-sm bg-black/50"
+            className={`relative rounded-sm bg-black/50 ${size === "lg" ? "size-5" : "size-4"}`}
           >
             <GameEntity
               entity={fetchedItems[item!]}
@@ -41,7 +39,7 @@ const Items = ({
           {[0, 1, 2, 6].map((i) => (
             <div
               key={`item-${i}`}
-              className="relative rounded-sm bg-black/50 size-5 sm:size-6"
+              className={`relative rounded-sm bg-black/50 ${size === "lg" ? "size-5 sm:size-6" : "size-5 sm:size-4"}`}
             >
               <GameEntity
                 entity={fetchedItems[items[i]!]}
@@ -57,7 +55,7 @@ const Items = ({
           {[3, 4, 5].map((i) => (
             <div
               key={`item-${i}`}
-              className="relative rounded-sm bg-black/50 size-5 sm:size-6"
+              className={`relative rounded-sm bg-black/50 ${size === "lg" ? "size-5 sm:size-6" : "size-5 sm:size-4"}`}
             >
               <GameEntity
                 entity={fetchedItems[items[i]!]}
@@ -68,7 +66,7 @@ const Items = ({
           ))}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -30,6 +30,7 @@ const page = async ({ searchParams }: PageProps) => {
   const account = await fetchAccount(gameName, tagLine);
   const summoner = await fetchSummoner(account.puuid);
   const matchIds = await fetchMatchHistory(account.puuid);
+  
   const matches = await Promise.all(
     matchIds.map((matchId: string) => fetchMatchDetails(matchId))
   );
@@ -37,7 +38,7 @@ const page = async ({ searchParams }: PageProps) => {
   return (
     <>
       <Navbar />
-      <div className="font-poppins max-w-2xl  mx-4 sm:mx-auto content-center">
+      <div className="font-poppins max-w-2xl  mx-2 sm:mx-auto content-center">
         <div className="flex items-center gap-2 mb-2">
           <div className="relative">
             <Image
@@ -57,7 +58,7 @@ ${summoner.profileIconId}.png`}
           </h2>
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 rounded-sm">
           {matches.map((match, index) => (
             <MatchCard key={index} userPuuid={account.puuid} params={match} />
           ))}

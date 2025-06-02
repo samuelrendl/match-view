@@ -6,8 +6,10 @@ import {
   AugmentEntity,
   ItemEntity,
 } from "@/types/gameEntity";
-import { Participant } from "@/types/matchcard";
+import { MatchInfo, Participant } from "@/types/matchcard";
 import { groupByPlacement } from "@/lib/utils";
+
+const header = ["KDA", "Damage", "Gold", "CS", "Vision", "Items"];
 
 const TeamsMatchDetails = ({
   shorterGameVersion,
@@ -18,6 +20,7 @@ const TeamsMatchDetails = ({
   fetchedAugments,
   fetchedRunes,
   fetchedItems,
+  teams,
 }: {
   shorterGameVersion: string;
   participants: Participant[];
@@ -27,6 +30,7 @@ const TeamsMatchDetails = ({
   fetchedRunes: RuneEntity[];
   fetchedAugments: { augments: AugmentEntity[] };
   fetchedItems: Record<number, ItemEntity>;
+  teams: MatchInfo["teams"];
 }) => {
   const winners = participants.filter(
     (p) => p.placement >= 1 && p.placement <= 4
@@ -92,42 +96,87 @@ const TeamsMatchDetails = ({
           </div>
         </>
       ) : (
-        <>
-          <div className="">
-            {participants
-              .filter((participant) => participant.teamId === 100)
-              .map((participant, index) => (
-                <PlayerMatchDetail
-                  key={index}
-                  shorterGameVersion={shorterGameVersion}
-                  gameType={gameType}
-                  participant={participant}
-                  userPuuid={userPuuid}
-                  fetchedSummoners={fetchedSummoners}
-                  fetchedAugments={fetchedAugments}
-                  fetchedRunes={fetchedRunes}
-                  fetchedItems={fetchedItems}
-                />
+        <div className="flex flex-col gap-2">
+          <div>
+            <div className="grid grid-cols-[30%_15%_20%_18%_15%_12%_18%] w-full max-sm:hidden">
+              <h2>
+                <span
+                  className={`font-bold ${teams[0].win ? "text-secondary" : "text-matchCard-death"}`}
+                >
+                  {teams[0].win ? "Victory" : "Defeat"}{" "}
+                </span>
+                <span className="font-extralight">(Blue Team)</span>
+              </h2>
+              {header.map((item, index) => (
+                <p key={index} className="text-sm font-light text-center">
+                  {item}
+                </p>
               ))}
+            </div>
+
+            <div className="flex flex-col gap-0.5">
+              {participants
+                .filter((participant) => participant.teamId === 100)
+                .map((participant, index) => (
+                  <div
+                    key={index}
+                    className={`rounded-md shadow-md ${teams[0].win ? "bg-matchCard-bg_win_detail" : "bg-matchCard-bg_loss_detail"}`}
+                  >
+                    <PlayerMatchDetail
+                      shorterGameVersion={shorterGameVersion}
+                      gameType={gameType}
+                      participant={participant}
+                      userPuuid={userPuuid}
+                      fetchedSummoners={fetchedSummoners}
+                      fetchedAugments={fetchedAugments}
+                      fetchedRunes={fetchedRunes}
+                      fetchedItems={fetchedItems}
+                    />
+                  </div>
+                ))}
+            </div>
           </div>
           <div className="">
-            {participants
-              .filter((participant) => participant.teamId === 200)
-              .map((participant, index) => (
-                <PlayerMatchDetail
-                  key={index}
-                  shorterGameVersion={shorterGameVersion}
-                  gameType={gameType}
-                  participant={participant}
-                  userPuuid={userPuuid}
-                  fetchedSummoners={fetchedSummoners}
-                  fetchedAugments={fetchedAugments}
-                  fetchedRunes={fetchedRunes}
-                  fetchedItems={fetchedItems}
-                />
-              ))}
+            <div className="flex items-center mb-1 w-full">
+              <h2 className="min-w-36">
+                <span
+                  className={`font-bold ${teams[1].win ? "text-secondary" : "text-matchCard-death"}`}
+                >
+                  {teams[1].win ? "Victory" : "Defeat"}{" "}
+                </span>
+                <span className="font-light">(Red Team)</span>
+              </h2>
+              <div className="grid grid-cols-[15%_22%_18%_15%_12%_18%] w-full max-sm:hidden">
+                {header.map((item, index) => (
+                  <p key={index} className="text-sm font-light text-center">
+                    {item}
+                  </p>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-col gap-0.5">
+              {participants
+                .filter((participant) => participant.teamId === 200)
+                .map((participant, index) => (
+                  <div
+                    key={index}
+                    className={`rounded-md shadow-md ${teams[1].win ? "bg-matchCard-bg_win_detail" : "bg-matchCard-bg_loss_detail"}`}
+                  >
+                    <PlayerMatchDetail
+                      shorterGameVersion={shorterGameVersion}
+                      gameType={gameType}
+                      participant={participant}
+                      userPuuid={userPuuid}
+                      fetchedSummoners={fetchedSummoners}
+                      fetchedAugments={fetchedAugments}
+                      fetchedRunes={fetchedRunes}
+                      fetchedItems={fetchedItems}
+                    />
+                  </div>
+                ))}
+            </div>
           </div>
-        </>
+        </div>
       )}
     </>
   );

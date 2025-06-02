@@ -19,7 +19,9 @@ const ChampSetup = ({
   fetchedSummoners,
   fetchedRunes,
   fetchedAugments,
+  size = "lg",
 }: {
+  size?: "sm" | "lg";
   shorterGameVersion: string;
   player: Participant;
   gameType: string;
@@ -63,7 +65,9 @@ const ChampSetup = ({
     entity: SummonerSpellEntity | RuneEntity | AugmentEntity | null,
     type: "summoner" | "rune" | "augment"
   ) => (
-    <div className="size-5 rounded-sm bg-black/50 sm:size-6">
+    <div
+      className={`rounded-sm bg-black/50 ${size === "lg" ? "size-5 sm:size-6" : "size-4"}`}
+    >
       <GameEntity
         entity={entity}
         type={type}
@@ -73,17 +77,23 @@ const ChampSetup = ({
   );
 
   return (
-    <div className="flex justify-between items-center gap-0.5">
+    <div className="flex items-center gap-0.5">
       {/* Champion Image with Level */}
-      <div className="relative drop-shadow-lg size-[42px] sm:size-[50px]">
+      <div
+        className={`relative drop-shadow-lg ${size === "lg" ? "size-[42px] sm:size-[50px]" : "size-[36px]"}`}
+      >
         <Image
           src={`https://ddragon.leagueoflegends.com/cdn/${shorterGameVersion}/img/champion/${player?.championName}.png`}
           alt={`${player?.championName}`}
           width={64}
           height={64}
+          loading="lazy"
+          quality={70}
           className="rounded object-contain"
         />
-        <div className="absolute bottom-0 left-0 w-4 rounded-sm bg-black/50 text-center text-[10px] font-bold leading-snug text-white sm:text-[14px]">
+        <div
+          className={`absolute bottom-0 left-0 w-4 rounded-sm bg-black/50 text-center font-bold leading-snug text-white ${size === "lg" ? "text-[10px] sm:text-[14px]" : "text-[8px]"}`}
+        >
           {player?.champLevel}
         </div>
       </div>

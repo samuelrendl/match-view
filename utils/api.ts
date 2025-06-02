@@ -60,7 +60,7 @@ export const fetchSummoner = async (puuid: string, region = "eun1") => {
 
 export const fetchMatchHistory = async (puuid: string, region = "europe") => {
   const response = await fetch(
-    `https://${region}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=10`,
+    `https://${region}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=1`,
     {
       headers: { "X-Riot-Token": process.env.RIOT_API_KEY! },
     }

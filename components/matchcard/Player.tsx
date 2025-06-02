@@ -11,7 +11,7 @@ const Team = ({
   userPuuid: string;
 }) => {
   return (
-    <div className="flex gap-0.5 w-16">
+    <div className="flex gap-0.5 w-20">
       <Image
         src={`https://ddragon.leagueoflegends.com/cdn/${shorterGameVersion}/img/champion/${participant.championName === "FiddleSticks" ? "Fiddlesticks" : participant.championName}.png`}
         alt={`${participant.championName}`}
@@ -21,7 +21,7 @@ const Team = ({
       <a
         href={`/search?username=${participant.riotIdGameName}%23${participant.riotIdTagline}`}
         target="_blank"
-        className={`${participant.puuid === userPuuid ? "font-bold" : ""} truncate z-auto hover:underline hover:font-bold`}
+        className={`${participant.puuid === userPuuid ? "font-bold" : ""} truncate text-xs z-auto hover:underline hover:font-bold`}
       >
         {participant.riotIdGameName}
       </a>
