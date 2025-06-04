@@ -45,8 +45,8 @@ const PlayerMatchDetail = ({
   );
 
   return (
-    <div className="grid grid-cols-[75px_80px_1fr] text-[10px] p-1">
-      <div className="row-span-2 self-center">
+    <div className="grid grid-cols-[75px_80px_1fr] text-[10px] p-1 sm:grid-cols-8 sm:justify-items-center sm:self-center sm:p-0 sm:py-1">
+      <div className="row-span-2 self-center sm:justify-self-center sm:row-span-1">
         <ChampSetup
           shorterGameVersion={shorterGameVersion}
           player={participant}
@@ -57,10 +57,14 @@ const PlayerMatchDetail = ({
           size="sm"
         />
       </div>
-      <p className="truncate max-w-14 sm:max-w-none sm:w-32 sm:font-semibold">
+      <a
+        href={`/search?username=${participant.riotIdGameName}%23${participant.riotIdTagline}`}
+        target="_blank"
+        className={`truncate max-w-14 sm:max-w-none sm:font-semibold sm:justify-self-start`}
+      >
         {participant.riotIdGameName}
-      </p>
-      <div className="flex order-2 w-32 gap-4">
+      </a>
+      <div className="flex order-2 w-32 gap-4 sm:order-none sm:flex-col sm:gap-0 sm:w-auto sm:justify-center">
         <p className="font-semibold">
           {participant.kills}{" "}
           <span className="font-light text-neutral-500">/</span>{" "}
@@ -72,19 +76,22 @@ const PlayerMatchDetail = ({
           {kdaRatio} <span className="font-light">KDA</span>
         </p>
       </div>
-      <p className="sm:hidden justify-self-end self-center order-6">
-        {participant.totalDamageDealtToChampions} DMG
+      <p className="justify-self-end self-center order-6 sm:order-none sm:justify-self-center">
+        {participant.totalDamageDealtToChampions}{" "}
+        <span className="sm:hidden">DMG</span>
       </p>
-      <p className="max-sm:hidden">{participant.goldEarned}</p>
-      <p className={`${gameType === "Arena" ? "hidden" : "hidden sm:block"}`}>
+      <p className="max-sm:hidden sm:self-center sm:justify-self-center">{participant.goldEarned}</p>
+      <p className={`${gameType === "Arena" ? "hidden" : "hidden sm:block sm:self-center sm:justify-self-center"}`}>
         {participant.totalMinionsKilled}{" "}
         <span className="font-light sm:hidden">CS</span>
       </p>
-      <p className={`max-sm:hidden ${gameType === "Arena" ? "hidden" : ""}`}>
+      <p
+        className={`max-sm:hidden ${gameType === "Arena" ? "hidden" : "sm:self-center sm:justify-self-center"}`}
+      >
         {participant.visionScore}{" "}
         <span className="font-light sm:hidden">vision</span>
       </p>
-      <div className="flex justify-between justify-self-end self-center">
+      <div className="justify-self-end self-center sm:justify-self-center">
         <Items
           shorterGameVersion={shorterGameVersion}
           size="sm"

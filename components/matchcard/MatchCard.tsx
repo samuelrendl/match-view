@@ -105,7 +105,7 @@ const MatchCard = async ({
           <div className="w-full mx-2">
             <div className="flex w-full flex-col sm:flex-row sm:justify-between">
               {/* Match summary */}
-              <div className="flex justify-between items-start sm:flex-col sm:justify-center sm:items-center sm:gap-1">
+              <div className="flex justify-between items-start mb-1 sm:flex-col sm:justify-center sm:items-center sm:gap-1">
                 <p className="leading-none sm:flex sm:flex-col sm:gap-0.5">
                   <span
                     className={`font-bold drop-shadow-md ${gameResult() === "WIN" ? "text-secondary" : "text-matchCard-death"}`}
