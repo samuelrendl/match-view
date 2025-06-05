@@ -53,10 +53,3 @@ export interface MatchInfo {
     win: boolean;
   }[];
 }
-
-export interface MatchCardProps {
-  params: {
-    info: MatchInfo;
-    gameResult: string;
-  };
-}

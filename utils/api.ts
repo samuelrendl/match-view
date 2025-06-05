@@ -26,7 +26,10 @@ export const fetchAccount = async (
     const response = await fetch(
       `https://${region}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodedGameName}/${encodedTagLine}`,
       {
-        headers: { "X-Riot-Token": process.env.RIOT_API_KEY! },
+        headers: { "X-Riot-Token": (() => {
+          if (!process.env.RIOT_API_KEY) throw new Error("RIOT_API_KEY is not set");
+          return process.env.RIOT_API_KEY;
+        })() },
       }
     );
 

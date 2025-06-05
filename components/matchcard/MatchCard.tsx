@@ -1,5 +1,5 @@
 import { formatGameDuration, kdaRatioCal, timeAgo } from "@/lib/utils";
-import { Participant, MatchCardProps } from "../../types/matchcard";
+import { Participant, MatchInfo } from "../../types/matchcard";
 import {
   Accordion,
   AccordionContent,
@@ -31,18 +31,16 @@ const MatchCard = async ({
   params,
 }: {
   userPuuid: string;
-  params: MatchCardProps["params"];
+  params: MatchInfo;
 }) => {
   const {
-    info: {
-      gameCreation,
-      gameDuration,
-      queueId,
-      gameMode,
-      gameVersion,
-      participants,
-      teams,
-    },
+    gameCreation,
+    gameDuration,
+    queueId,
+    gameMode,
+    gameVersion,
+    participants,
+    teams,
   } = params;
   const user = findUserByPUUID(userPuuid, participants);
   const shortenGameVersion = (gameVersion: string): string => {
