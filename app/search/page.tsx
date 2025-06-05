@@ -5,7 +5,7 @@ interface PageProps {
   searchParams: { username?: string };
 }
 
-const Page = async ({ searchParams }: PageProps) => {
+const Page = ({ searchParams }: PageProps) => {
   const { username } = searchParams;
   if (!username) return <div>No username provided.</div>;
 
