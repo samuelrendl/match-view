@@ -5,8 +5,8 @@ interface PageProps {
   searchParams: { username?: string };
 }
 
-const page = async ({ searchParams }: PageProps) => {
-  const { username } = await searchParams;
+const Page = async ({ searchParams }: PageProps) => {
+  const { username } = searchParams;
   if (!username) return <div>No username provided.</div>;
 
   return (
@@ -17,4 +17,4 @@ const page = async ({ searchParams }: PageProps) => {
   );
 };
 
-export default page;
+export default Page;
