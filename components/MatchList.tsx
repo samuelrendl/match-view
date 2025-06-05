@@ -78,7 +78,9 @@ const MatchList = ({ username }: MatchListProps) => {
       setMatches((prev) => [...prev, ...nextMatches]);
       setLoadedCount((prev) => prev + nextIds.length);
     } catch (e) {
-      setError("Could not load more matches.");
+      setError(
+        `Could not load more matches. ${e instanceof Error ? e.message : "Unknown error"}`
+      );
     } finally {
       setLoading(false);
     }

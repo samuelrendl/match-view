@@ -1,4 +1,4 @@
-import { formatGameDuration, kdaRatioCal, timeAgo } from "@/lib/utils";
+import { formatGameDuration, timeAgo } from "@/lib/utils";
 import { Participant, MatchInfo } from "../../types/matchcard";
 import {
   Accordion,
@@ -116,7 +116,7 @@ const MatchCard = async ({
                 <div className="flex items-center justify-center gap-2 text-xs sm:flex-col sm:gap-0.5">
                   <p className="font-bold leading-none">{gameType}</p>
                   <p className="">
-                    {user?.placement! > 0 ? `${user?.placement}th` : ""}
+                    {user?.placement! > 0 ? `${user?.placement!}th` : ""}
                   </p>
                   <p className="text-[10px] font-light leading-none">
                     {howLongAgo}

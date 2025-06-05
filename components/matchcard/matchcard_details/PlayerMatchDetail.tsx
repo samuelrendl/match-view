@@ -13,7 +13,6 @@ const PlayerMatchDetail = ({
   shorterGameVersion,
   participant,
   gameType,
-  userPuuid,
   fetchedSummoners,
   fetchedAugments,
   fetchedRunes,
