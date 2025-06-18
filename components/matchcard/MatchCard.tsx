@@ -1,4 +1,10 @@
-import { formatGameDuration, timeAgo } from "@/lib/utils";
+'use client'
+
+import {
+  formatGameDuration,
+  getGameModeDescription,
+  timeAgo,
+} from "@/lib/utils";
 import { Participant, MatchInfo } from "../../types/matchcard";
 import {
   Accordion,
@@ -6,33 +12,24 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-  fetchAugments,
-  fetchItems,
-  fetchQueueId,
-  fetchRunes,
-  fetchSummonerSpells,
-} from "@/utils/api";
 import Teams from "./Teams";
 import ChampSetup from "./ChampSetup";
 import TeamsMatchDetails from "./matchcard_details/TeamsMatchDetails";
 import Items from "./Items";
 import Stats from "./Stats";
+import { StaticData } from "@/types/matchList";
 
-const findUserByPUUID = (
-  userPuuid: string,
-  participants: Participant[]
-): Participant | undefined => {
-  return participants.find((participant) => participant.puuid === userPuuid);
-};
-
-const MatchCard = async ({
+const MatchCard = ({
   userPuuid,
   params,
+  staticData,
 }: {
   userPuuid: string;
   params: MatchInfo;
+  staticData: StaticData;
 }) => {
+  if (!params || !staticData || !userPuuid) return null;
+
   const {
     gameCreation,
     gameDuration,
@@ -42,7 +39,24 @@ const MatchCard = async ({
     participants,
     teams,
   } = params;
+
+  const { items, runes, summoners, queues, gamemodes, augments } = staticData;
+
+  const findUserByPUUID = (
+    userPuuid: string,
+    participants: Participant[]
+  ): Participant => {
+    const user = participants.find(
+      (participant) => participant.puuid === userPuuid
+    );
+    if (!user) {
+      throw new Error(`Participant with PUUID ${userPuuid} not found.`);
+    }
+    return user;
+  };
+
   const user = findUserByPUUID(userPuuid, participants);
+
   const shortenGameVersion = (gameVersion: string): string => {
     const parts = gameVersion.split(".");
 
@@ -55,24 +69,10 @@ const MatchCard = async ({
   };
 
   const shorterGameVersion = shortenGameVersion(gameVersion);
-
-  const [
-    fetchedItems,
-    fetchedSummoners,
-    fetchedRunes,
-    gameType,
-    fetchedAugments,
-  ] = await Promise.all([
-    fetchItems(shorterGameVersion),
-    fetchSummonerSpells(shorterGameVersion),
-    fetchRunes(shorterGameVersion),
-    fetchQueueId(queueId, gameMode),
-    fetchAugments(),
-  ]);
-
+  const gameType = getGameModeDescription(queueId, gameMode, queues, gamemodes);
   const howLongAgo = timeAgo(gameCreation);
 
-  const items = [
+  const userItems = [
     user!.item0,
     user!.item1,
     user!.item2,
@@ -97,13 +97,13 @@ const MatchCard = async ({
     <Accordion type="single" collapsible>
       <AccordionItem
         value="item-1"
-        className={`border-none rounded-md ${gameResult() === "WIN" ? "bg-matchCard-bg_win" : "bg-matchCard-bg_loss"}`}
+        className={`rounded-md border-none ${gameResult() === "WIN" ? "bg-matchCard-bg_win" : "bg-matchCard-bg_loss"}`}
       >
         <AccordionTrigger className={`py-2 hover:no-underline`}>
-          <div className="w-full mx-2">
+          <div className="mx-2 w-full">
             <div className="flex w-full flex-col sm:flex-row sm:justify-between">
               {/* Match summary */}
-              <div className="flex justify-between items-start mb-1 sm:flex-col sm:justify-center sm:items-center sm:gap-1">
+              <div className="mb-1 flex items-start justify-between sm:flex-col sm:items-center sm:justify-center sm:gap-1">
                 <p className="leading-none sm:flex sm:flex-col sm:gap-0.5">
                   <span
                     className={`font-bold drop-shadow-md ${gameResult() === "WIN" ? "text-secondary" : "text-matchCard-death"}`}
@@ -116,7 +116,9 @@ const MatchCard = async ({
                 <div className="flex items-center justify-center gap-2 text-xs sm:flex-col sm:gap-0.5">
                   <p className="font-bold leading-none">{gameType}</p>
                   <p className="">
-                    {user && user.placement !== undefined && user.placement > 0 ? `${user.placement}th` : ""}
+                    {user && user.placement !== undefined && user.placement > 0
+                      ? `${user.placement}th`
+                      : ""}
                   </p>
                   <p className="text-[10px] font-light leading-none">
                     {howLongAgo}
@@ -131,22 +133,22 @@ const MatchCard = async ({
                   shorterGameVersion={shorterGameVersion}
                   gameType={gameType}
                   player={user!}
-                  fetchedSummoners={fetchedSummoners}
-                  fetchedRunes={fetchedRunes}
-                  fetchedAugments={fetchedAugments}
+                  fetchedSummoners={summoners!}
+                  fetchedRunes={runes!}
+                  fetchedAugments={augments!}
                 />
 
                 {/* Right side - items & stats */}
                 <div className="flex flex-col justify-between sm:flex-row-reverse sm:gap-6">
                   <Items
                     shorterGameVersion={shorterGameVersion}
-                    items={items}
-                    fetchedItems={fetchedItems}
+                    items={userItems}
+                    fetchedItems={items!}
                   />
                   <Stats player={user!} gameType={gameType} />
                 </div>
               </div>
-              <div className="max-sm:hidden flex gap-2 text-[8px] font-light leading-snug">
+              <div className="flex gap-2 text-[8px] font-light leading-snug max-sm:hidden">
                 <Teams
                   gameType={gameType}
                   participants={participants}
@@ -158,16 +160,16 @@ const MatchCard = async ({
           </div>
         </AccordionTrigger>
         <AccordionContent>
-          <div className={`mt-1 mx-2`}>
+          <div className={`mx-2 mt-1`}>
             <TeamsMatchDetails
               shorterGameVersion={shorterGameVersion}
               gameType={gameType}
               participants={participants}
               userPuuid={userPuuid}
-              fetchedSummoners={fetchedSummoners}
-              fetchedAugments={fetchedAugments}
-              fetchedRunes={fetchedRunes}
-              fetchedItems={fetchedItems}
+              fetchedSummoners={summoners!}
+              fetchedAugments={augments!}
+              fetchedRunes={runes!}
+              fetchedItems={items!}
               teams={teams}
             />
           </div>

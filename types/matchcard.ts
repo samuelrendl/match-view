@@ -53,3 +53,12 @@ export interface MatchInfo {
     win: boolean;
   }[];
 }
+
+export interface Match {
+  metadata: {
+    dataVersion: string;
+    matchId: string;
+    participants: string[];
+  };
+  info: MatchInfo;
+}

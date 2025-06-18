@@ -15,7 +15,7 @@ const Stats = ({
   );
 
   return (
-    <div className="ml-auto mr-0 flex gap-3 text-xs sm:flex-col sm:ml-0 sm:gap-0.5">
+    <div className="ml-auto mr-0 flex gap-3 text-xs sm:ml-0 sm:flex-col sm:gap-0.5">
       <p className="font-semibold">
         {player.kills} <span className="font-light text-neutral-500">/</span>{" "}
         <span className="text-matchCard-death">{player.deaths}</span>{" "}

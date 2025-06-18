@@ -33,7 +33,7 @@ const Items = ({
       </div>
 
       {/* Tablet and bigger */}
-      <div className="hidden sm:flex sm:flex-col sm:justify-center sm:gap-0.5 sm:w-fit">
+      <div className="hidden sm:flex sm:w-fit sm:flex-col sm:justify-center sm:gap-0.5">
         {/* top row: items 1,2,3 and then 7 */}
         <div className="flex gap-0.5">
           {[0, 1, 2, 6].map((i) => (

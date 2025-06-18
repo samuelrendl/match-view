@@ -6,6 +6,7 @@ import {
   SummonerSpellEntity,
 } from "../types/gameEntity";
 import { Participant } from "@/types/matchcard";
+import { Queues, Gamemodes } from "@/types/matchList";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -142,4 +143,46 @@ export const groupByPlacement = (group: Participant[]) => {
     .map(Number)
     .sort((a, b) => a - b)
     .map((placement) => map[placement]);
+};
+
+export const getGameModeDescription = (
+  queueId: string,
+  gamemode: string,
+  queues: Queues[] | undefined,
+  gamemodes: Gamemodes[] | undefined
+): string => {
+  const customGameModes: Record<number, string> = {
+    0: "Custom",
+    400: "Normal Draft",
+    420: "Ranked Solo",
+    440: "Ranked Flex",
+    450: "ARAM",
+    700: "Clash",
+    720: "ARAM Clash",
+    900: "ARURF",
+    1020: "One for All",
+    1400: "Ultimate Spellbook",
+    1700: "Arena",
+    1710: "Arena",
+    2000: "Tutorial",
+  };
+
+  const queueIdNum = Number(queueId);
+
+  if (customGameModes[queueIdNum]) {
+    return customGameModes[queueIdNum];
+  }
+
+  if (gamemode !== "CLASSIC") {
+    if (!gamemodes?.length) return gamemode;
+    const mode = gamemodes.find((g) => g.gameMode === gamemode);
+    if (!mode) return gamemode;
+    return mode.description;
+  }
+
+  if (!queues?.length) return `Queue ${queueId}`;
+  const queue = queues.find((q) => q.queueId === queueIdNum);
+  if (!queue) return `Queue ${queueId}`;
+
+  return queue.description;
 };

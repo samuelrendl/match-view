@@ -44,8 +44,8 @@ const PlayerMatchDetail = ({
   );
 
   return (
-    <div className="grid grid-cols-[75px_80px_1fr] text-[10px] p-1 sm:grid-cols-8 sm:justify-items-center sm:self-center sm:p-0 sm:py-1">
-      <div className="row-span-2 self-center sm:justify-self-center sm:row-span-1">
+    <div className="grid grid-cols-[75px_80px_1fr] p-1 text-[10px] sm:grid-cols-8 sm:justify-items-center sm:self-center sm:p-0 sm:py-1">
+      <div className="row-span-2 self-center sm:row-span-1 sm:justify-self-center">
         <ChampSetup
           shorterGameVersion={shorterGameVersion}
           player={participant}
@@ -59,11 +59,11 @@ const PlayerMatchDetail = ({
       <a
         href={`/search?username=${participant.riotIdGameName}%23${participant.riotIdTagline}`}
         target="_blank"
-        className={`truncate max-w-14 sm:max-w-none sm:font-semibold sm:justify-self-start`}
+        className={`max-w-14 truncate sm:max-w-none sm:justify-self-start sm:font-semibold`}
       >
         {participant.riotIdGameName}
       </a>
-      <div className="flex order-2 w-32 gap-4 sm:order-none sm:flex-col sm:gap-0 sm:w-auto sm:justify-center">
+      <div className="order-2 flex w-32 gap-4 sm:order-none sm:w-auto sm:flex-col sm:justify-center sm:gap-0">
         <p className="font-semibold">
           {participant.kills}{" "}
           <span className="font-light text-neutral-500">/</span>{" "}
@@ -75,12 +75,16 @@ const PlayerMatchDetail = ({
           {kdaRatio} <span className="font-light">KDA</span>
         </p>
       </div>
-      <p className="justify-self-end self-center order-6 sm:order-none sm:justify-self-center">
+      <p className="order-6 self-center justify-self-end sm:order-none sm:justify-self-center">
         {participant.totalDamageDealtToChampions}{" "}
         <span className="sm:hidden">DMG</span>
       </p>
-      <p className="max-sm:hidden sm:self-center sm:justify-self-center">{participant.goldEarned}</p>
-      <p className={`${gameType === "Arena" ? "hidden" : "hidden sm:block sm:self-center sm:justify-self-center"}`}>
+      <p className="max-sm:hidden sm:self-center sm:justify-self-center">
+        {participant.goldEarned}
+      </p>
+      <p
+        className={`${gameType === "Arena" ? "hidden" : "hidden sm:block sm:self-center sm:justify-self-center"}`}
+      >
         {participant.totalMinionsKilled}{" "}
         <span className="font-light sm:hidden">CS</span>
       </p>
@@ -90,7 +94,7 @@ const PlayerMatchDetail = ({
         {participant.visionScore}{" "}
         <span className="font-light sm:hidden">vision</span>
       </p>
-      <div className="justify-self-end self-center sm:justify-self-center">
+      <div className="self-center justify-self-end sm:justify-self-center">
         <Items
           shorterGameVersion={shorterGameVersion}
           size="sm"

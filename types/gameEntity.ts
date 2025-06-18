@@ -17,11 +17,9 @@ export interface RuneEntity extends BaseEntity {
   longDesc?: string;
   slots?: Slot[];
 }
-
 export interface Slot {
   runes: RuneEntity[];
 }
-
 export interface SummonerSpellEntity extends BaseEntity {
   id: string;
   key: string;

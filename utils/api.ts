@@ -1,10 +1,7 @@
-export const fetchGameVersion = async () => {
+export const fetchVersions = async () => {
   try {
-    const response = await fetch(
-      "https://ddragon.leagueoflegends.com/api/versions.json"
-    );
-    const versions = await response.json();
-    return versions[0];
+    const response = await fetch("/api/fetch-version");
+    return await response.json();
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message);
@@ -14,82 +11,47 @@ export const fetchGameVersion = async () => {
   }
 };
 
-export const fetchAccount = async (
-  gameName: string,
-  tagLine: string,
-  region = "europe"
-) => {
-  try {
-    const encodedGameName = encodeURIComponent(gameName);
-    const encodedTagLine = encodeURIComponent(tagLine);
-
-    const response = await fetch(
-      `https://${region}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodedGameName}/${encodedTagLine}`,
-      {
-        headers: { "X-Riot-Token": (() => {
-          if (!process.env.RIOT_API_KEY) throw new Error("RIOT_API_KEY is not set");
-          return process.env.RIOT_API_KEY;
-        })() },
-      }
-    );
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(
-        `API Error ${response.status}: ${errorData?.status?.message || "Unknown error"}`
-      );
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Fetch error:", error);
-    throw new Error(
-      `Failed to fetch account: ${error instanceof Error ? error.message : "Unknown error"}`
-    );
-  }
+export const fetchAccount = async (gameName: string, tagLine: string) => {
+  const res = await fetch(
+    `/api/fetch-account?gameName=${gameName}&tagLine=${tagLine}`
+  );
+  if (!res.ok) throw new Error(`Failed to fetch account: ${res.status}`);
+  return await res.json();
 };
 
 export const fetchSummoner = async (puuid: string, region = "eun1") => {
-  const response = await fetch(
-    `https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}`,
-    {
-      headers: { "X-Riot-Token": process.env.RIOT_API_KEY! },
-    }
+  const res = await fetch(
+    `/api/fetch-summoner?puuid=${puuid}&region=${region}`
   );
-
-  if (!response.ok) throw new Error("Failed to fetch Summoner");
-  return await response.json();
+  if (!res.ok) throw new Error(`Failed to fetch summoner: ${res.status}`);
+  return await res.json();
 };
 
-export const fetchMatchHistory = async (puuid: string, region = "europe") => {
-  const response = await fetch(
-    `https://${region}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=1`,
-    {
-      headers: { "X-Riot-Token": process.env.RIOT_API_KEY! },
-    }
+export const fetchMatchHistory = async (
+  puuid: string,
+  region = "europe",
+  start = 0,
+  count = 5
+) => {
+  const res = await fetch(
+    `/api/fetch-matchHistory?puuid=${puuid}&region=${region}&start=${start}&count=${count}`
   );
-  if (!response.ok) throw new Error("Failed to fetch match history");
-  return await response.json();
+  if (!res.ok) throw new Error("Failed to fetch match history");
+  return await res.json();
 };
 
 export const fetchMatchDetails = async (matchId: string, region = "europe") => {
-  const response = await fetch(
-    `https://${region}.api.riotgames.com/lol/match/v5/matches/${matchId}`,
-    {
-      headers: { "X-Riot-Token": process.env.RIOT_API_KEY! },
-    }
+  const res = await fetch(
+    `/api/fetch-matchDetails?matchId=${matchId}&region=${region}`
   );
-  if (!response.ok) throw new Error("Failed to fetch match details");
-  return await response.json();
+  if (!res.ok) throw new Error(`Failed to fetch summoner: ${res.status}`);
+  return await res.json();
 };
 
-export const fetchQueueId = async (
-  queueId: string,
-  gamemode: string
-): Promise<string> => {
+export const fetchQueueAndGamemodes = async () => {
   const [queueRes, gamemodeRes] = await Promise.all([
-    fetch("https://static.developer.riotgames.com/docs/lol/queues.json"),
-    fetch("https://static.developer.riotgames.com/docs/lol/gameModes.json"),
+    fetch("/api/fetch-queue"),
+    fetch("/api/fetch-gameModes"),
   ]);
 
   if (!queueRes.ok) throw new Error("Failed to fetch queue data");
@@ -98,47 +60,11 @@ export const fetchQueueId = async (
   const queues = await queueRes.json();
   const gamemodes = await gamemodeRes.json();
 
-  const customGameModes: Record<number, string> = {
-    0: "Custom",
-    400: "Normal Draft",
-    420: "Ranked Solo",
-    440: "Ranked Flex",
-    450: "ARAM",
-    700: "Clash",
-    720: "ARAM Clash",
-    900: "ARURF",
-    1020: "One for All",
-    1400: "Ultimate Spellbook",
-    1700: "Arena",
-    1710: "Arena",
-    2000: "Tutorial",
-  };
-
-  const numericQueueId = Number(queueId);
-  if (customGameModes[numericQueueId]) {
-    return customGameModes[numericQueueId];
-  }
-
-  if (gamemode !== "CLASSIC") {
-    const foundGamemode = gamemodes.find(
-      (g: { gamemode: string }) => g.gamemode === gamemode
-    );
-    if (!foundGamemode) throw new Error("Gamemode not found");
-    return foundGamemode.description;
-  }
-
-  const foundQueue = queues.find(
-    (q: { queueId: number }) => q.queueId === numericQueueId
-  );
-  if (!foundQueue) throw new Error("Queue ID not found");
-
-  return foundQueue.description;
+  return { queues, gamemodes };
 };
 
 export const fetchItems = async (gameVersion: string) => {
-  const response = await fetch(
-    `https://ddragon.leagueoflegends.com/cdn/${gameVersion}/data/en_US/item.json`
-  );
+  const response = await fetch(`/api/fetch-items?gameVersion=${gameVersion}`);
   if (!response.ok) throw new Error("Failed to fetch items");
   const { data } = await response.json();
   return data;
@@ -146,24 +72,20 @@ export const fetchItems = async (gameVersion: string) => {
 
 export const fetchSummonerSpells = async (gameVersion: string) => {
   const response = await fetch(
-    `https://ddragon.leagueoflegends.com/cdn/${gameVersion}/data/en_US/summoner.json`
+    `/api/fetch-summonerSpells?gameVersion=${gameVersion}`
   );
   if (!response.ok) throw new Error("Failed to fetch summoners");
   return await response.json();
 };
 
 export const fetchRunes = async (gameVersion: string) => {
-  const response = await fetch(
-    `https://ddragon.leagueoflegends.com/cdn/${gameVersion}/data/en_US/runesReforged.json`
-  );
+  const response = await fetch(`/api/fetch-runes?gameVersion=${gameVersion}`);
   if (!response.ok) throw new Error("Failed to fetch runes");
   return await response.json();
 };
 
-export const fetchAugments = async () => {
-  const response = await fetch(
-    `https://raw.communitydragon.org/latest/cdragon/arena/en_us.json`
-  );
+export const fetchAugments = async (gameVersion = "latest") => {
+  const response = await fetch(`/api/fetch-augments?gameVersion=${gameVersion}`);
   if (!response.ok) throw new Error("Failed to fetch runes");
   return await response.json();
 };

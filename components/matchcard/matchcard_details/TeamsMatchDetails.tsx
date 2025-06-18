@@ -98,7 +98,7 @@ const TeamsMatchDetails = ({
       ) : (
         <div className="flex flex-col gap-2">
           <div>
-            <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr_1fr] w-full max-sm:hidden">
+            <div className="grid w-full grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr_1fr] max-sm:hidden">
               <h2 className="">
                 <span
                   className={`font-bold ${teams[0].win ? "text-secondary" : "text-matchCard-death"}`}
@@ -108,7 +108,7 @@ const TeamsMatchDetails = ({
                 <span className="font-extralight">(Blue Team)</span>
               </h2>
               {header.map((item, index) => (
-                <p key={index} className="text-sm font-light text-center">
+                <p key={index} className="text-center text-sm font-light">
                   {item}
                 </p>
               ))}
@@ -137,7 +137,7 @@ const TeamsMatchDetails = ({
             </div>
           </div>
           <div className="">
-            <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr_1fr] w-full max-sm:hidden">
+            <div className="grid w-full grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr_1fr] max-sm:hidden">
               <h2 className="min-w-36">
                 <span
                   className={`font-bold ${teams[1].win ? "text-secondary" : "text-matchCard-death"}`}
@@ -148,7 +148,7 @@ const TeamsMatchDetails = ({
               </h2>
 
               {header.map((item, index) => (
-                <p key={index} className="text-sm font-light text-center">
+                <p key={index} className="text-center text-sm font-light">
                   {item}
                 </p>
               ))}
