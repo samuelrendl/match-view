@@ -158,7 +158,7 @@ const TeamsMatchDetails = ({
                 ))}
             </div>
           </div>
-          <div className="">
+          <div>
             <div className="grid w-full grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr_1fr] max-sm:hidden">
               <h2 className="min-w-36">
                 <span

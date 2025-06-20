@@ -82,7 +82,7 @@ const PlayerMatchDetail = ({
         <span className="sm:hidden">DMG</span>
       </p>
       <p
-        className={`${gameType === "Arena" ? "self-center justify-self-end sm:order-none sm:justify-self-center" : "hidden"}`}
+        className={`${gameType === "Arena" ? "hidden self-center justify-self-end sm:order-none sm:block sm:justify-self-center" : "hidden"}`}
       >
         {participant.totalDamageTaken} <span className="sm:hidden">DMG</span>
       </p>
