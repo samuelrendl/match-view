@@ -49,7 +49,7 @@ const TeamsMatchDetails = ({
         <>
           {winnerTeams.map((team, index) => (
             <div key={`winner-${index}`} className="mb-2">
-              <div className="grid w-full grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr] max-sm:hidden">
+              <div className="grid w-full grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr]">
                 <h2>
                   <span className={`text-secondary`}>
                     {getOrdinalSuffix(team[0]?.placement)}{" "}
@@ -57,7 +57,10 @@ const TeamsMatchDetails = ({
                   <span className="font-extralight"></span>
                 </h2>
                 {arenaHeader.map((item, index) => (
-                  <p key={index} className="text-center text-sm font-light">
+                  <p
+                    key={index}
+                    className="text-center text-sm font-light max-sm:hidden"
+                  >
                     {item}
                   </p>
                 ))}
@@ -84,7 +87,7 @@ const TeamsMatchDetails = ({
 
           {loserTeams.map((team, index) => (
             <div key={`loser-${index}`} className="mb-2">
-              <div className="grid w-full grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr] max-sm:hidden">
+              <div className="grid w-full grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr]">
                 <h2>
                   <span className={`text-matchCard-death`}>
                     {getOrdinalSuffix(team[0]?.placement)}{" "}
@@ -92,7 +95,10 @@ const TeamsMatchDetails = ({
                   <span className="font-extralight"></span>
                 </h2>
                 {arenaHeader.map((item, index) => (
-                  <p key={index} className="text-center text-sm font-light">
+                  <p
+                    key={index}
+                    className="text-center text-sm font-light max-sm:hidden"
+                  >
                     {item}
                   </p>
                 ))}
@@ -142,7 +148,7 @@ const TeamsMatchDetails = ({
                 .map((participant, index) => (
                   <div
                     key={index}
-                    className={`rounded-md shadow-md ${teams[1].win ? "bg-matchCard-bg_win_detail" : "bg-matchCard-bg_loss_detail"}`}
+                    className={`rounded-md shadow-md ${teams[0].win ? "bg-matchCard-bg_win_detail" : "bg-matchCard-bg_loss_detail"}`}
                   >
                     <PlayerMatchDetail
                       shorterGameVersion={shorterGameVersion}
