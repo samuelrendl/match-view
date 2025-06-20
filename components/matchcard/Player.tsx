@@ -11,7 +11,7 @@ const Team = ({
   userPuuid: string;
 }) => {
   return (
-    <div className="flex w-20 gap-0.5">
+    <div className="flex gap-0.5">
       <Image
         src={`https://ddragon.leagueoflegends.com/cdn/${shorterGameVersion}/img/champion/${participant.championName === "FiddleSticks" ? "Fiddlesticks" : participant.championName}.png`}
         alt={`${participant.championName}`}

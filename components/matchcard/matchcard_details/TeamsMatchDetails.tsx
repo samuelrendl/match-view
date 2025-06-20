@@ -7,9 +7,10 @@ import {
   ItemEntity,
 } from "@/types/gameEntity";
 import { MatchInfo, Participant } from "@/types/matchcard";
-import { groupByPlacement } from "@/lib/utils";
+import { getOrdinalSuffix, groupByPlacement } from "@/lib/utils";
 
 const header = ["KDA", "Damage", "Gold", "CS", "Vision", "Items"];
+const arenaHeader = ["KDA", "Damage", "Taken", "Gold", "Items"];
 
 const TeamsMatchDetails = ({
   shorterGameVersion,
@@ -46,54 +47,75 @@ const TeamsMatchDetails = ({
     <>
       {gameType === "Arena" ? (
         <>
-          <div className="">
-            <h2 className="text-sm font-semibold text-secondary">Win</h2>
-            <div className="">
-              <div className="">
-                {winnerTeams.map((team, index) => (
-                  <div key={`winner-${index}`} className="">
-                    {team.map((participant, i) => (
-                      <PlayerMatchDetail
-                        key={i}
-                        shorterGameVersion={shorterGameVersion}
-                        gameType={gameType}
-                        participant={participant}
-                        userPuuid={userPuuid}
-                        fetchedSummoners={fetchedSummoners}
-                        fetchedAugments={fetchedAugments}
-                        fetchedRunes={fetchedRunes}
-                        fetchedItems={fetchedItems}
-                      />
-                    ))}
-                  </div>
+          {winnerTeams.map((team, index) => (
+            <div key={`winner-${index}`} className="mb-2">
+              <div className="grid w-full grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr] max-sm:hidden">
+                <h2>
+                  <span className={`text-secondary`}>
+                    {getOrdinalSuffix(team[0]?.placement)}{" "}
+                  </span>
+                  <span className="font-extralight"></span>
+                </h2>
+                {arenaHeader.map((item, index) => (
+                  <p key={index} className="text-center text-sm font-light">
+                    {item}
+                  </p>
+                ))}
+              </div>
+              <div
+                className={`rounded-md shadow-md ${"bg-matchCard-bg_win_detail"}`}
+              >
+                {team.map((participant, i) => (
+                  <PlayerMatchDetail
+                    key={i}
+                    shorterGameVersion={shorterGameVersion}
+                    gameType={gameType}
+                    participant={participant}
+                    userPuuid={userPuuid}
+                    fetchedSummoners={fetchedSummoners}
+                    fetchedAugments={fetchedAugments}
+                    fetchedRunes={fetchedRunes}
+                    fetchedItems={fetchedItems}
+                  />
                 ))}
               </div>
             </div>
-          </div>
-          <div>
-            <h2 className="text-sm font-bold text-matchCard-death">Loss</h2>
-            <div className="">
-              <div className="">
-                {loserTeams.map((team, index) => (
-                  <div key={`loser-${index}`} className="">
-                    {team.map((participant, i) => (
-                      <PlayerMatchDetail
-                        key={i}
-                        shorterGameVersion={shorterGameVersion}
-                        gameType={gameType}
-                        participant={participant}
-                        userPuuid={userPuuid}
-                        fetchedSummoners={fetchedSummoners}
-                        fetchedAugments={fetchedAugments}
-                        fetchedRunes={fetchedRunes}
-                        fetchedItems={fetchedItems}
-                      />
-                    ))}
-                  </div>
+          ))}
+
+          {loserTeams.map((team, index) => (
+            <div key={`loser-${index}`} className="mb-2">
+              <div className="grid w-full grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr] max-sm:hidden">
+                <h2>
+                  <span className={`text-matchCard-death`}>
+                    {getOrdinalSuffix(team[0]?.placement)}{" "}
+                  </span>
+                  <span className="font-extralight"></span>
+                </h2>
+                {arenaHeader.map((item, index) => (
+                  <p key={index} className="text-center text-sm font-light">
+                    {item}
+                  </p>
+                ))}
+              </div>
+              <div
+                className={`rounded-md shadow-md ${"bg-matchCard-bg_loss_detail"}`}
+              >
+                {team.map((participant, i) => (
+                  <PlayerMatchDetail
+                    key={i}
+                    shorterGameVersion={shorterGameVersion}
+                    gameType={gameType}
+                    participant={participant}
+                    userPuuid={userPuuid}
+                    fetchedSummoners={fetchedSummoners}
+                    fetchedAugments={fetchedAugments}
+                    fetchedRunes={fetchedRunes}
+                    fetchedItems={fetchedItems}
+                  />
                 ))}
               </div>
             </div>
-          </div>
+          ))}
         </>
       ) : (
         <div className="flex flex-col gap-2">
@@ -120,7 +142,7 @@ const TeamsMatchDetails = ({
                 .map((participant, index) => (
                   <div
                     key={index}
-                    className={`rounded-md shadow-md ${teams[0].win ? "bg-matchCard-bg_win_detail" : "bg-matchCard-bg_loss_detail"}`}
+                    className={`rounded-md shadow-md ${teams[1].win ? "bg-matchCard-bg_win_detail" : "bg-matchCard-bg_loss_detail"}`}
                   >
                     <PlayerMatchDetail
                       shorterGameVersion={shorterGameVersion}

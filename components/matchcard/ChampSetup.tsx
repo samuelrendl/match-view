@@ -83,13 +83,13 @@ const ChampSetup = ({
         className={`relative drop-shadow-lg ${size === "lg" ? "size-[42px] sm:size-[50px]" : "size-[36px]"}`}
       >
         <Image
-          src={`https://ddragon.leagueoflegends.com/cdn/${shorterGameVersion}/img/champion/${player?.championName}.png`}
-          alt={`${player?.championName}`}
+          src={`https://ddragon.leagueoflegends.com/cdn/${shorterGameVersion}/img/champion/${player.championName === "FiddleSticks" ? "Fiddlesticks" : player.championName}.png`}
+          alt={`${player.championName}`}
           width={64}
           height={64}
-          loading="lazy"
           quality={70}
           className="rounded object-contain"
+          priority
         />
         <div
           className={`absolute bottom-0 left-0 w-4 rounded-sm bg-black/50 text-center font-bold leading-snug text-white ${size === "lg" ? "text-[10px] sm:text-[14px]" : "text-[8px]"}`}
@@ -101,7 +101,7 @@ const ChampSetup = ({
       {/* Summoners or Augments + Runes or Augments */}
       <div className="flex gap-0.5">
         {/* Left column (Summoners or first 2 augments) */}
-        <div className="flex flex-col gap-0.5 justify-center items-center">
+        <div className="flex flex-col items-center justify-center gap-0.5">
           {renderEntityBlock(
             getEntity(summonerOne, playerAugment1),
             isArena ? "augment" : "summoner"
@@ -114,7 +114,7 @@ const ChampSetup = ({
         </div>
 
         {/* Right column (Runes or second 2 augments) */}
-        <div className="flex flex-col gap-0.5 justify-center items-center">
+        <div className="flex flex-col items-center justify-center gap-0.5">
           {renderEntityBlock(
             getRune(primaryRune, playerAugment3),
             isArena ? "augment" : "rune"

@@ -3,6 +3,7 @@
 import {
   formatGameDuration,
   getGameModeDescription,
+  getOrdinalSuffix,
   timeAgo,
 } from "@/lib/utils";
 import { Participant, MatchInfo } from "../../types/matchcard";
@@ -117,7 +118,7 @@ const MatchCard = ({
                 <p className="font-bold leading-none">{gameType}</p>
                 <p className="">
                   {user && user.placement !== undefined && user.placement > 0
-                    ? `${user.placement}th`
+                    ? `${getOrdinalSuffix(user.placement)}`
                     : ""}
                 </p>
                 <p className="text-[10px] font-light leading-none">
@@ -139,7 +140,13 @@ const MatchCard = ({
               />
 
               {/* Right side - items & stats */}
-              <div className="flex flex-col justify-between sm:flex-row-reverse sm:gap-6">
+              <div
+                className={
+                  gameType === "Arena"
+                    ? "flex flex-col-reverse items-center justify-center gap-0.5"
+                    : "flex flex-col justify-between sm:flex-row-reverse sm:gap-6"
+                }
+              >
                 <Items
                   shorterGameVersion={shorterGameVersion}
                   items={userItems}

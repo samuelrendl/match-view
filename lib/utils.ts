@@ -186,3 +186,13 @@ export const getGameModeDescription = (
 
   return queue.description;
 };
+
+export const getOrdinalSuffix = (number: number) => {
+  const suffixes: Record<number, string> = {
+    1: "st",
+    2: "nd",
+    3: "rd",
+  };
+  const suffix = suffixes[number] || "th";
+  return number + suffix;
+}

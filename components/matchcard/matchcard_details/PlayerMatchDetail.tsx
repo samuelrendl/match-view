@@ -44,7 +44,9 @@ const PlayerMatchDetail = ({
   );
 
   return (
-    <div className="grid grid-cols-[75px_80px_1fr] p-1 text-[10px] sm:grid-cols-8 sm:justify-items-center sm:self-center sm:p-0 sm:py-1">
+    <div
+      className={`grid grid-cols-[75px_80px_1fr] p-1 text-[10px] ${gameType === "Arena" ? "sm:grid-cols-7" : "sm:grid-cols-8"} sm:justify-items-center sm:self-center sm:p-0 sm:py-1`}
+    >
       <div className="row-span-2 self-center sm:row-span-1 sm:justify-self-center">
         <ChampSetup
           shorterGameVersion={shorterGameVersion}
@@ -78,6 +80,11 @@ const PlayerMatchDetail = ({
       <p className="order-6 self-center justify-self-end sm:order-none sm:justify-self-center">
         {participant.totalDamageDealtToChampions}{" "}
         <span className="sm:hidden">DMG</span>
+      </p>
+      <p
+        className={`${gameType === "Arena" ? "self-center justify-self-end sm:order-none sm:justify-self-center" : "hidden"}`}
+      >
+        {participant.totalDamageTaken} <span className="sm:hidden">DMG</span>
       </p>
       <p className="max-sm:hidden sm:self-center sm:justify-self-center">
         {participant.goldEarned}

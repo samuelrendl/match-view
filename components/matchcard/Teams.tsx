@@ -29,40 +29,36 @@ const Teams = ({
         <>
           <div className="flex flex-col">
             <h2 className="text-sm font-semibold text-secondary">Win</h2>
-            <div className="flex flex-col justify-center gap-2">
-              <div className="flex h-16 w-32 flex-col flex-wrap gap-1">
-                {winnerTeams.map((team, index) => (
-                  <div key={`winner-${index}`} className="flex w-16 flex-col">
-                    {team.map((participant, i) => (
-                      <Player
-                        key={i}
-                        participant={participant}
-                        userPuuid={userPuuid}
-                        shorterGameVersion={shorterGameVersion}
-                      />
-                    ))}
-                  </div>
-                ))}
-              </div>
+            <div className="grid grid-flow-col grid-rows-2 gap-1.5">
+              {winnerTeams.map((team, index) => (
+                <div key={`winner-${index}`} className="flex w-20 flex-col">
+                  {team.map((participant, i) => (
+                    <Player
+                      key={i}
+                      participant={participant}
+                      userPuuid={userPuuid}
+                      shorterGameVersion={shorterGameVersion}
+                    />
+                  ))}
+                </div>
+              ))}
             </div>
           </div>
           <div>
             <h2 className="text-sm font-bold text-matchCard-death">Loss</h2>
-            <div className="flex flex-col justify-center gap-2">
-              <div className="flex h-16 w-32 flex-col flex-wrap gap-1">
-                {loserTeams.map((team, index) => (
-                  <div key={`loser-${index}`} className="flex w-16 flex-col">
-                    {team.map((participant, i) => (
-                      <Player
-                        key={i}
-                        participant={participant}
-                        userPuuid={userPuuid}
-                        shorterGameVersion={shorterGameVersion}
-                      />
-                    ))}
-                  </div>
-                ))}
-              </div>
+            <div className="grid grid-flow-col grid-rows-2 gap-1.5">
+              {loserTeams.map((team, index) => (
+                <div key={`loser-${index}`} className="flex w-20 flex-col">
+                  {team.map((participant, i) => (
+                    <Player
+                      key={i}
+                      participant={participant}
+                      userPuuid={userPuuid}
+                      shorterGameVersion={shorterGameVersion}
+                    />
+                  ))}
+                </div>
+              ))}
             </div>
           </div>
         </>
@@ -72,24 +68,26 @@ const Teams = ({
             {participants
               .filter((participant) => participant.teamId === 100)
               .map((participant, index) => (
-                <Player
-                  key={index}
-                  shorterGameVersion={shorterGameVersion}
-                  participant={participant}
-                  userPuuid={userPuuid}
-                />
+                <div key={index} className="w-24">
+                  <Player
+                    shorterGameVersion={shorterGameVersion}
+                    participant={participant}
+                    userPuuid={userPuuid}
+                  />
+                </div>
               ))}
           </div>
           <div className="flex flex-col gap-0.5">
             {participants
               .filter((participant) => participant.teamId === 200)
               .map((participant, index) => (
-                <Player
-                  key={index}
-                  shorterGameVersion={shorterGameVersion}
-                  participant={participant}
-                  userPuuid={userPuuid}
-                />
+                <div key={index} className="w-24">
+                  <Player
+                    shorterGameVersion={shorterGameVersion}
+                    participant={participant}
+                    userPuuid={userPuuid}
+                  />
+                </div>
               ))}
           </div>
         </>

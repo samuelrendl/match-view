@@ -14,6 +14,7 @@ export interface Participant {
   assists: number;
   deaths: number;
   totalDamageDealtToChampions: number;
+  totalDamageTaken: number;
   totalMinionsKilled: number;
   visionScore: number;
   goldEarned: number;

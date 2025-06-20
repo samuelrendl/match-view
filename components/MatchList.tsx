@@ -172,6 +172,7 @@ const MatchList = ({ username }: MatchListProps) => {
             width={50}
             height={50}
             className="rounded-md"
+            priority
           />
           <p className="absolute -top-2 left-4 rounded-sm bg-black/70 text-center text-[12px] font-light leading-tight text-white">
             {summoner.summonerLevel}
@@ -212,9 +213,11 @@ const MatchList = ({ username }: MatchListProps) => {
       </div>
       {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
       {loadedCount < matchIds.length && (
-        <Button onClick={loadMore} disabled={loading}>
-          {loading ? "Loading..." : "Load More"}
-        </Button>
+        <div className="mt-4 flex justify-center">
+          <Button onClick={loadMore} disabled={loading}>
+            {loading ? "Loading..." : "Load More"}
+          </Button>
+        </div>
       )}
     </div>
   );
