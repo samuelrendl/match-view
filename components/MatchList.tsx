@@ -150,6 +150,14 @@ const MatchList = ({ username }: MatchListProps) => {
 
   const { data: staticData } = useStaticData(staticDataVersion || "");
 
+  if (loading) {
+    return (
+      <p className="mt-10 text-center text-muted-foreground">
+        Loading matches...
+      </p>
+    );
+  }
+
   if (!account || !summoner || !staticData) {
     return (
       <p className="mt-10 text-center text-red-500">

@@ -6,7 +6,9 @@ export default function Home() {
       <h1 className="font-bai-jamjuree text-4xl font-semibold italic text-white">
         Match<span className="text-primary">View</span>
       </h1>
-      <SearchBar />
+      <div className="w-full px-2">
+        <SearchBar />
+      </div>
     </main>
   );
 }

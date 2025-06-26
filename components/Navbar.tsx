@@ -11,7 +11,9 @@ const Navbar = () => {
       >
         Match<span className="text-primary">View</span>
       </Link>
-      <SearchBar />
+      <div>
+        <SearchBar />
+      </div>
     </nav>
   );
 };

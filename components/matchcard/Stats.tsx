@@ -14,6 +14,12 @@ const Stats = ({
     player.deaths ?? 0
   );
 
+  const isArenaOrAram = () => {
+    if (gameType === "Arena" || gameType === "ARAM") {
+      return "hidden";
+    }
+  };
+
   return (
     <div className="ml-auto mr-0 flex gap-3 text-xs sm:ml-0 sm:flex-col sm:gap-0.5">
       <p className="font-semibold">
@@ -28,7 +34,7 @@ const Stats = ({
         <p className={`${gameType === "Arena" ? "hidden" : ""}`}>
           {player.totalMinionsKilled} <span className="font-light">CS</span>
         </p>
-        <p className={`max-sm:hidden ${gameType === "Arena" ? "hidden" : ""}`}>
+        <p className={`max-sm:hidden ${isArenaOrAram()}`}>
           {player.visionScore} <span className="font-light">vision</span>
         </p>
       </div>

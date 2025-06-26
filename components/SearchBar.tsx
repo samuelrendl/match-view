@@ -18,19 +18,24 @@ const SearchBar = () => {
   };
 
   return (
-    <>
-      <form onSubmit={handleSubmit} className="flex rounded-sm bg-white">
-        <Input
-          name="username"
-          type="text"
-          className="border-none text-sm text-black shadow-none outline-none focus-visible:ring-transparent"
-          placeholder="Search your RiotID..."
-        />
-        <Button type="submit" variant="ghost" className="hidden">
-          <MagnifyingGlassIcon />
-        </Button>
-      </form>
-    </>
+    <form
+      onSubmit={handleSubmit}
+      className="mx-auto w-full max-w-96 rounded-3xl bg-slate-100"
+    >
+      <Input
+        name="username"
+        type="text"
+        className="border-none text-sm text-black shadow-none outline-none focus-visible:ring-transparent"
+        placeholder="Search your RiotID..."
+      />
+      <Button
+        type="submit"
+        variant="default"
+        className="m-0.5 hidden border bg-white p-3"
+      >
+        <MagnifyingGlassIcon className="text-black" />
+      </Button>
+    </form>
   );
 };
 
