@@ -66,11 +66,12 @@ const MatchList = ({ username }: MatchListProps) => {
   const [loadedCount, setLoadedCount] = useState(0);
   const [account, setAccount] = useState<Account | null>(null);
   const [summoner, setSummoner] = useState<Summoner | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const init = useCallback(async () => {
-    setLoading(true);
+    setIsInitialLoading(true);
     setError(null);
     try {
       const { gameName, tagLine } = splitUsername(username);
@@ -103,7 +104,7 @@ const MatchList = ({ username }: MatchListProps) => {
       setError("Failed to load data. Please try again.");
       console.error("Initialization error:", e);
     } finally {
-      setLoading(false);
+      setIsInitialLoading(false);
     }
   }, [username]);
 
@@ -112,7 +113,7 @@ const MatchList = ({ username }: MatchListProps) => {
   }, [init]);
 
   const loadMore = useCallback(async () => {
-    setLoading(true);
+    setIsLoadingMore(true);
     setError(null);
     try {
       const nextIds = matchIds.slice(
@@ -144,13 +145,13 @@ const MatchList = ({ username }: MatchListProps) => {
         `Could not load more matches. ${e instanceof Error ? e.message : "Unknown error"}`
       );
     } finally {
-      setLoading(false);
+      setIsLoadingMore(false);
     }
   }, [loadedCount, matchIds]);
 
   const { data: staticData } = useStaticData(staticDataVersion || "");
 
-  if (loading) {
+  if (isInitialLoading) {
     return (
       <p className="mt-10 text-center text-muted-foreground">
         Loading matches...
@@ -222,8 +223,8 @@ const MatchList = ({ username }: MatchListProps) => {
       {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
       {loadedCount < matchIds.length && (
         <div className="mt-4 flex justify-center">
-          <Button onClick={loadMore} disabled={loading}>
-            {loading ? "Loading..." : "Load More"}
+          <Button onClick={loadMore} disabled={isLoadingMore}>
+            {isLoadingMore ? "Loading..." : "Load More"}
           </Button>
         </div>
       )}
