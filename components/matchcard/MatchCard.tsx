@@ -17,30 +17,37 @@ import ChampSetup from "./ChampSetup";
 import TeamsMatchDetails from "./matchcard_details/TeamsMatchDetails";
 import Items from "./Items";
 import Stats from "./Stats";
-import { StaticData } from "@/types/matchList";
+import { useStaticData } from "@/hooks/useFetchStaticData";
 
 const MatchCard = ({
   itemIndex,
   userPuuid,
   params,
-  staticData,
 }: {
   itemIndex: number;
   userPuuid: string;
   params: MatchInfo;
-  staticData: StaticData;
 }) => {
-  if (!params || !staticData || !userPuuid) return null;
+  const shortenGameVersion = (gameVersion: string): string => {
+    const parts = gameVersion.split(".");
+    if (parts.length < 2) {
+      throw new Error("Invalid version format");
+    }
+    const [major, minor] = parts;
+    return `${major}.${minor}.1`;
+  };
 
-  const {
-    gameCreation,
-    gameDuration,
-    queueId,
-    gameMode,
-    gameVersion,
-    participants,
-    teams,
-  } = params;
+  const gameVersion = params?.gameVersion || "";
+  const shorterGameVersion = shortenGameVersion(gameVersion);
+  const { data: staticData, loading } = useStaticData(shorterGameVersion);
+
+  if (!params || !userPuuid) return null;
+  if (loading || !staticData) {
+    return <div className="mx-auto">Loading match data...</div>;
+  }
+
+  const { gameCreation, gameDuration, queueId, gameMode, participants, teams } =
+    params;
 
   const { items, runes, summoners, queues, gamemodes, augments } = staticData;
 
@@ -59,18 +66,6 @@ const MatchCard = ({
 
   const user = findUserByPUUID(userPuuid, participants);
 
-  const shortenGameVersion = (gameVersion: string): string => {
-    const parts = gameVersion.split(".");
-
-    if (parts.length < 2) {
-      throw new Error("Invalid version format");
-    }
-
-    const [major, minor] = parts;
-    return `${major}.${minor}.1`;
-  };
-
-  const shorterGameVersion = shortenGameVersion(gameVersion);
   const gameType = getGameModeDescription(queueId, gameMode, queues, gamemodes);
   const howLongAgo = timeAgo(gameCreation);
 

@@ -2,7 +2,7 @@
 
 import { splitUsername } from "@/lib/utils";
 import { MatchInfo } from "@/types/matchcard";
-import { Account, StaticData, Summoner } from "@/types/matchList";
+import { Account, Summoner } from "@/types/matchList";
 import { useEffect, useState, useCallback, memo } from "react";
 import MatchCard from "./matchcard/MatchCard";
 import { Button } from "./ui/button";
@@ -12,7 +12,6 @@ import {
   fetchMatchHistory,
   fetchSummoner,
 } from "@/utils/api";
-import { useStaticData } from "@/hooks/useFetchStaticData";
 import Image from "next/image";
 import { Accordion } from "@radix-ui/react-accordion";
 
@@ -33,27 +32,23 @@ const MemoizedMatchCard = memo(
     matchId,
     userPuuid,
     params,
-    staticData,
   }: {
     index: number;
     matchId: string;
     userPuuid: string;
     params: MatchInfo;
-    staticData: StaticData;
   }) => (
     <MatchCard
       itemIndex={index}
       key={matchId}
       userPuuid={userPuuid}
       params={params}
-      staticData={staticData}
     />
   ),
   (prev, next) => {
     return (
       prev.matchId === next.matchId &&
-      prev.userPuuid === next.userPuuid &&
-      prev.staticData === next.staticData
+      prev.userPuuid === next.userPuuid
     );
   }
 );
@@ -149,8 +144,6 @@ const MatchList = ({ username }: MatchListProps) => {
     }
   }, [loadedCount, matchIds]);
 
-  const { data: staticData } = useStaticData(staticDataVersion || "");
-
   if (isInitialLoading) {
     return (
       <p className="mt-10 text-center text-muted-foreground">
@@ -159,7 +152,7 @@ const MatchList = ({ username }: MatchListProps) => {
     );
   }
 
-  if (!account || !summoner || !staticData) {
+  if (!account || !summoner) {
     return (
       <p className="mt-10 text-center text-red-500">
         Error: Missing account, summoner, or static data.
@@ -207,7 +200,6 @@ const MatchList = ({ username }: MatchListProps) => {
                   matchId={storedMatch.id}
                   userPuuid={account.puuid}
                   params={storedMatch.info}
-                  staticData={staticData}
                 />
               );
             } catch (e) {
