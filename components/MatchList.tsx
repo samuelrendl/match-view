@@ -155,7 +155,7 @@ const MatchList = ({ username }: MatchListProps) => {
   if (!account || !summoner) {
     return (
       <p className="mt-10 text-center text-red-500">
-        Error: Missing account, summoner, or static data.
+        Error: Missing account or summoner.
       </p>
     );
   }
