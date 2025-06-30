@@ -85,7 +85,9 @@ export const fetchRunes = async (gameVersion: string) => {
 };
 
 export const fetchAugments = async (gameVersion = "latest") => {
-  const response = await fetch(`/api/fetch-augments?gameVersion=${gameVersion}`);
+  const response = await fetch(
+    `/api/fetch-augments?gameVersion=${gameVersion}`
+  );
   if (!response.ok) throw new Error("Failed to fetch runes");
   return await response.json();
 };

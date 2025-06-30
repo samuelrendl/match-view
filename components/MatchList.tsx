@@ -24,7 +24,7 @@ interface StoredMatch {
   info: MatchInfo;
 }
 
-const MATCHES_PER_BATCH = 5;
+const MATCHES_PER_BATCH = 10;
 
 const MemoizedMatchCard = memo(
   ({
