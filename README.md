@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Matchview
 
-## Getting Started
+A simple OP.GG clone that shows a League of Legends player's recent matches, built with Next.js and the Riot Games API.
 
-First, run the development server:
+## 🔍 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Search for a summoner by name
+- View their **recent match history**
+- Each match is displayed as a **match card** with:
+  - Champion, summoner spells, runes, KDA, and items
+  - Hover tooltips for detailed descriptions of runes/spells/items
+- Expand the card to reveal full match data:
+  - All players, champions, KDA, CS, gold, vision score, and items
+- Clean, modern UI built with Tailwind CSS and Shadcn components
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Frontend:** Next.js, TypeScript, Tailwind CSS, Shadcn
+- **APIs:** Riot Games API, [CommunityDragon](https://communitydragon.org/)
+- **Tooling:** Prettier, ESLint
+- **Design:** Figma
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Live Demo
 
-## Learn More
+👉 [Visit Matchview on Vercel](https://match-view.vercel.app)
 
-To learn more about Next.js, take a look at the following resources:
+## 🧪 Setup Instructions
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Clone the repository:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```bash
+   git clone https://github.com/yourusername/matchview.git
+   cd matchview
+   ```
 
-## Deploy on Vercel
+2. Install dependencies:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   npm install
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. Create a `.env.local` file in the root and add your Riot API key:
+
+   ```env
+   RIOT_API_KEY=your_api_key_here
+   ```
+
+4. Run the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+➡️ To get a Riot API key, visit: [developer.riotgames.com](https://developer.riotgames.com)
+
+## 💡 Motivation
+
+Matchview is a personal project created to:
+
+- Practice working with APIs (Riot + CommunityDragon)
+- Improve my frontend skills using modern tools
+- Add a polished, real-world project to my portfolio
+
+## ❗ Notes
+
+This is a hobby project with no ongoing development planned. There's still room for polish and improvement, but I'm focusing on new challenges in upcoming projects.
+
+---
+
+> Built by **Samuel Rendl**
