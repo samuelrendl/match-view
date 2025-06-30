@@ -13,12 +13,9 @@ A simple OP.GG clone that shows a League of Legends player's recent matches, bui
   - All players, champions, KDA, CS, gold, vision score, and items
 - Clean, modern UI built with Tailwind CSS and Shadcn components
 
-<div align="center">
-  <img src="/screenshots/mobile.png" alt="Mobile view" width="600" />
-</div>
-
-<div align="center">
-  <img src="/screenshots/desktop.png" alt="Desktop view" width="600" />
+<div align="display: flex; gap: 10px;">
+    <img src="/screenshots/mobile.png" alt="Mobile view" width="400" />
+    <img src="/screenshots/desktop.png" alt="Desktop view" width="400" />
 </div>
 
 ## 🛠️ Tech Stack
