@@ -13,6 +13,9 @@ A simple OP.GG clone that shows a League of Legends player's recent matches, bui
   - All players, champions, KDA, CS, gold, vision score, and items
 - Clean, modern UI built with Tailwind CSS and Shadcn components
 
+![Mobile](/screenshots/mobile.png)
+![Desktop](/screenshots/desktop.png)
+
 ## 🛠️ Tech Stack
 
 - **Frontend:** Next.js, TypeScript, Tailwind CSS, Shadcn
@@ -29,7 +32,7 @@ A simple OP.GG clone that shows a League of Legends player's recent matches, bui
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/matchview.git
+   git clone https://github.com/samuelrendl/matchview.git
    cd matchview
    ```
 
