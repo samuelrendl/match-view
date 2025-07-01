@@ -6,8 +6,15 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+const regions = [
+  { label: "EUNE", value: "EUN1" },
+  { label: "EUW", value: "EUW1" },
+  { label: "NA", value: "NA1" },
+];
+
 const SearchBar = () => {
   const [error, setError] = useState("");
+  const [selectedRegion, setSelectedRegion] = useState("EUNE");
   const router = useRouter();
 
   const validateUsername = (input: string) => {
@@ -19,13 +26,18 @@ const SearchBar = () => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const username = formData.get("username") as string;
+    const region = formData.get("region") as string;
+
     if (!validateUsername(username)) {
       setError("Wrong input format. Use gamename#tag");
       return;
     }
+
     setError("");
     if (username.trim()) {
-      router.push(`/search?username=${encodeURIComponent(username)}`);
+      router.push(
+        `/search?username=${encodeURIComponent(username)}&region=${region}`
+      );
     }
   };
 
@@ -33,7 +45,7 @@ const SearchBar = () => {
     <div>
       <form
         onSubmit={handleSubmit}
-        className="mx-auto w-full max-w-96 rounded-3xl bg-slate-100"
+        className="mx-auto flex w-full max-w-96 items-center justify-center rounded-3xl bg-slate-100 p-2"
       >
         <Input
           name="username"
@@ -42,14 +54,29 @@ const SearchBar = () => {
           placeholder="Search your RiotID..."
         />
 
+        <select
+          name="region"
+          value={selectedRegion}
+          onChange={(e) => setSelectedRegion(e.target.value)}
+          className="rounded-md border border-gray-300 p-2 text-sm text-black"
+        >
+          {regions.map(({ label, value }) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
+        </select>
+
         <Button
           type="submit"
           variant="default"
-          className="m-0.5 hidden border bg-white p-3"
+          className=" mt-0 bg-white text-black
+          "
         >
-          <MagnifyingGlassIcon className="text-black" />
+          <MagnifyingGlassIcon className="size-4" />
         </Button>
       </form>
+
       {error && (
         <p className="mt-1 text-center text-sm text-red-500">{error}</p>
       )}

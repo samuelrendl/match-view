@@ -17,6 +17,7 @@ import { Accordion } from "@radix-ui/react-accordion";
 
 interface MatchListProps {
   username: string;
+  region: string;
 }
 
 interface StoredMatch {
@@ -46,15 +47,26 @@ const MemoizedMatchCard = memo(
     />
   ),
   (prev, next) => {
-    return (
-      prev.matchId === next.matchId &&
-      prev.userPuuid === next.userPuuid
-    );
+    return prev.matchId === next.matchId && prev.userPuuid === next.userPuuid;
   }
 );
+
 MemoizedMatchCard.displayName = "MemoizedMatchCard";
 
-const MatchList = ({ username }: MatchListProps) => {
+const whatRegion = (region: string) => {
+  switch (region) {
+    case "EUW1":
+      return "europe";
+    case "EUN1":
+      return "europe";
+    case "NA1":
+      return "americas";
+    default:
+      throw new Error(`Unsupported region: ${region}`);
+  }
+};
+
+const MatchList = ({ username, region }: MatchListProps) => {
   const [staticDataVersion] = useState<string | null>("15.12.1");
   const [matches, setMatches] = useState<StoredMatch[]>([]);
   const [matchIds, setMatchIds] = useState<string[]>([]);
@@ -70,14 +82,21 @@ const MatchList = ({ username }: MatchListProps) => {
     setError(null);
     try {
       const { gameName, tagLine } = splitUsername(username);
-      const accountData = await fetchAccount(gameName, tagLine);
-      const summonerData = await fetchSummoner(accountData.puuid);
-      const matchIdList = await fetchMatchHistory(accountData.puuid);
+      const accountData = await fetchAccount(
+        gameName,
+        tagLine,
+        whatRegion(region)
+      );
+      const summonerData = await fetchSummoner(accountData.puuid, region);
+      const matchIdList = await fetchMatchHistory(
+        accountData.puuid,
+        whatRegion(region)
+      );
 
       const firstBatch = await Promise.all(
         matchIdList.slice(0, MATCHES_PER_BATCH).map(async (id: string) => {
           try {
-            const match = await fetchMatchDetails(id);
+            const match = await fetchMatchDetails(id, whatRegion(region));
             return { id, info: match.info };
           } catch (e) {
             console.error(`Failed to fetch match ${id}:`, e);
@@ -118,7 +137,7 @@ const MatchList = ({ username }: MatchListProps) => {
       const nextMatches = await Promise.all(
         nextIds.map(async (id) => {
           try {
-            const match = await fetchMatchDetails(id);
+            const match = await fetchMatchDetails(id, whatRegion(region));
             return { id, info: match.info };
           } catch (e) {
             console.error(`Failed to fetch match ${id}:`, e);

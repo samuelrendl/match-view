@@ -11,9 +11,13 @@ export const fetchVersions = async () => {
   }
 };
 
-export const fetchAccount = async (gameName: string, tagLine: string) => {
+export const fetchAccount = async (
+  gameName: string,
+  tagLine: string,
+  region: string
+) => {
   const res = await fetch(
-    `/api/fetch-account?gameName=${gameName}&tagLine=${tagLine}`
+    `/api/fetch-account?gameName=${gameName}&tagLine=${tagLine}&region=${region}`
   );
   if (!res.ok) throw new Error(`Failed to fetch account: ${res.status}`);
   return await res.json();
