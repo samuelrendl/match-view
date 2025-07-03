@@ -45,7 +45,7 @@ const SearchBar = () => {
     <div>
       <form
         onSubmit={handleSubmit}
-        className="mx-auto flex w-full max-w-96 items-center justify-center rounded-3xl bg-slate-100 p-2"
+        className="mx-auto flex w-full max-w-96 items-center justify-center gap-1 rounded-3xl bg-slate-100 p-2"
       >
         <Input
           name="username"
@@ -58,7 +58,7 @@ const SearchBar = () => {
           name="region"
           value={selectedRegion}
           onChange={(e) => setSelectedRegion(e.target.value)}
-          className="rounded-md border border-gray-300 p-2 text-sm text-black"
+          className="rounded-full bg-white p-2 text-sm text-black shadow-md"
         >
           {regions.map(({ label, value }) => (
             <option key={value} value={value}>
@@ -70,8 +70,7 @@ const SearchBar = () => {
         <Button
           type="submit"
           variant="default"
-          className=" mt-0 bg-white text-black
-          "
+          className=" mt-0 hidden rounded-full bg-white text-black shadow-md sm:block"
         >
           <MagnifyingGlassIcon className="size-4" />
         </Button>
