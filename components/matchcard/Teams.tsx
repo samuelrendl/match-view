@@ -9,6 +9,7 @@ interface TeamsProps {
   participants: Participant[];
   shorterGameVersion: string;
   userPuuid: string;
+  region?: string;
 }
 
 const Teams: React.FC<TeamsProps> = ({
@@ -16,9 +17,9 @@ const Teams: React.FC<TeamsProps> = ({
   participants,
   shorterGameVersion,
   userPuuid,
+  region,
 }) => {
-  
-  const playerProps = { shorterGameVersion, userPuuid };
+  const playerProps = { shorterGameVersion, userPuuid, region };
 
   return (
     <>

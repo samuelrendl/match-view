@@ -1,14 +1,16 @@
 import Image from "next/image";
 import { Participant } from "../../types/matchcard";
 
-const Team = ({
+const Player = ({
   shorterGameVersion,
   participant,
   userPuuid,
+  region,
 }: {
   shorterGameVersion: string;
   participant: Participant;
   userPuuid: string;
+  region?: string;
 }) => {
   return (
     <div className="flex gap-0.5">
@@ -19,7 +21,7 @@ const Team = ({
         height={15}
       />
       <a
-        href={`/search?username=${participant.riotIdGameName}%23${participant.riotIdTagline}`}
+        href={`/search?username=${participant.riotIdGameName}%23${participant.riotIdTagline}&region=${region}`}
         target="_blank"
         className={`${participant.puuid === userPuuid ? "font-bold" : ""} z-auto truncate text-xs hover:font-bold hover:underline`}
       >
@@ -29,4 +31,4 @@ const Team = ({
   );
 };
 
-export default Team;
+export default Player;

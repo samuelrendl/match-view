@@ -17,6 +17,7 @@ const PlayerMatchDetail = ({
   fetchedAugments,
   fetchedRunes,
   fetchedItems,
+  region,
 }: {
   shorterGameVersion: string;
   participant: Participant;
@@ -26,6 +27,7 @@ const PlayerMatchDetail = ({
   fetchedRunes: RuneEntity[];
   fetchedAugments: { augments: AugmentEntity[] };
   fetchedItems: Record<number, ItemEntity>;
+  region?: string;
 }) => {
   const items = [
     participant?.item0,
@@ -59,7 +61,7 @@ const PlayerMatchDetail = ({
         />
       </div>
       <a
-        href={`/search?username=${participant.riotIdGameName}%23${participant.riotIdTagline}`}
+        href={`/search?username=${participant.riotIdGameName}%23${participant.riotIdTagline}&region=${region}`}
         target="_blank"
         className={`max-w-14 truncate sm:max-w-none sm:justify-self-start sm:font-semibold`}
       >

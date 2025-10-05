@@ -33,17 +33,20 @@ const MemoizedMatchCard = memo(
     matchId,
     userPuuid,
     params,
+    region,
   }: {
     index: number;
     matchId: string;
     userPuuid: string;
     params: MatchInfo;
+    region?: string;
   }) => (
     <MatchCard
       itemIndex={index}
       key={matchId}
       userPuuid={userPuuid}
       params={params}
+      region={region}
     />
   ),
   (prev, next) => {
@@ -219,6 +222,7 @@ const MatchList = ({ username, region }: MatchListProps) => {
                   matchId={storedMatch.id}
                   userPuuid={account.puuid}
                   params={storedMatch.info}
+                  region={region}
                 />
               );
             } catch (e) {

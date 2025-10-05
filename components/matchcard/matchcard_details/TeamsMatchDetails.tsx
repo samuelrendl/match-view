@@ -29,6 +29,7 @@ interface TeamsMatchDetailsProps {
   fetchedAugments: { augments: AugmentEntity[] };
   fetchedItems: Record<number, ItemEntity>;
   teams: MatchInfo["teams"];
+  region?: string;
 }
 
 const getArenaGroups = (participants: Participant[]): Group[] => {
@@ -78,6 +79,7 @@ const TeamsMatchDetails: React.FC<TeamsMatchDetailsProps> = (props) => {
     fetchedAugments,
     fetchedItems,
     teams,
+    region,
   } = props;
 
   const headers = gameType === "Arena" ? arenaHeaders : classicHeaders;
@@ -96,6 +98,7 @@ const TeamsMatchDetails: React.FC<TeamsMatchDetailsProps> = (props) => {
     fetchedRunes,
     fetchedAugments,
     fetchedItems,
+    region,
   };
 
   return (

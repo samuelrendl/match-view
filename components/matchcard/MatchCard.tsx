@@ -23,10 +23,12 @@ const MatchCard = ({
   itemIndex,
   userPuuid,
   params,
+  region,
 }: {
   itemIndex: number;
   userPuuid: string;
   params: MatchInfo;
+  region?: string;
 }) => {
   const shortenGameVersion = (gameVersion: string): string => {
     const parts = gameVersion.split(".");
@@ -156,6 +158,7 @@ const MatchCard = ({
                 participants={participants}
                 shorterGameVersion={shorterGameVersion}
                 userPuuid={userPuuid}
+                region={region}
               />
             </div>
           </div>
@@ -173,6 +176,7 @@ const MatchCard = ({
             fetchedRunes={runes!}
             fetchedItems={items!}
             teams={teams}
+            region={region}
           />
         </div>
       </AccordionContent>
