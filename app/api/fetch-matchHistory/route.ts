@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     if (!riotApiKey) throw new Error("RIOT_API_KEY is not set");
 
     const response = await fetch(
-      `https://${region}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?${start}&${count}`,
+      `https://${region}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${count}`,
       {
         headers: {
           "X-Riot-Token": riotApiKey,
