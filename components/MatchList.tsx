@@ -25,7 +25,7 @@ interface StoredMatch {
   info: MatchInfo;
 }
 
-const MATCHES_PER_BATCH = 10;
+const MATCHES_PER_BATCH = 5;
 
 const MemoizedMatchCard = memo(
   ({
@@ -93,7 +93,9 @@ const MatchList = ({ username, region }: MatchListProps) => {
       const summonerData = await fetchSummoner(accountData.puuid, region);
       const matchIdList = await fetchMatchHistory(
         accountData.puuid,
-        whatRegion(region)
+        whatRegion(region),
+        0,
+        20
       );
 
       const firstBatch = await Promise.all(
@@ -116,14 +118,14 @@ const MatchList = ({ username, region }: MatchListProps) => {
       setAccount(accountData);
       setSummoner(summonerData);
       setMatchIds(matchIdList);
-      setLoadedCount(filteredMatches.length);
+      setLoadedCount(MATCHES_PER_BATCH);
     } catch (e) {
       setError("Failed to load data. Please try again.");
       console.error("Initialization error:", e);
     } finally {
       setIsInitialLoading(false);
     }
-  }, [username]);
+  }, [username, region]);
 
   useEffect(() => {
     init();
@@ -133,7 +135,20 @@ const MatchList = ({ username, region }: MatchListProps) => {
     setIsLoadingMore(true);
     setError(null);
     try {
-      const nextIds = matchIds.slice(
+      let currentMatchIds = matchIds;
+
+      if (loadedCount >= matchIds.length && account) {
+        const newMatchIds = await fetchMatchHistory(
+          account.puuid,
+          whatRegion(region),
+          matchIds.length,
+          20
+        );
+        currentMatchIds = [...matchIds, ...newMatchIds];
+        setMatchIds(currentMatchIds);
+      }
+
+      const nextIds = currentMatchIds.slice(
         loadedCount,
         loadedCount + MATCHES_PER_BATCH
       );
@@ -153,10 +168,8 @@ const MatchList = ({ username, region }: MatchListProps) => {
         (m): m is StoredMatch => m !== undefined
       );
 
-      if (filteredNextMatches.length > 0) {
-        setMatches((prev) => [...prev, ...filteredNextMatches]);
-        setLoadedCount((prev) => prev + filteredNextMatches.length);
-      }
+      setMatches((prev) => [...prev, ...filteredNextMatches]);
+      setLoadedCount((prev) => prev + MATCHES_PER_BATCH);
     } catch (e) {
       setError(
         `Could not load more matches. ${e instanceof Error ? e.message : "Unknown error"}`
@@ -164,7 +177,7 @@ const MatchList = ({ username, region }: MatchListProps) => {
     } finally {
       setIsLoadingMore(false);
     }
-  }, [loadedCount, matchIds]);
+  }, [loadedCount, matchIds, region, account]);
 
   if (isInitialLoading) {
     return (
@@ -236,13 +249,12 @@ const MatchList = ({ username, region }: MatchListProps) => {
         </Accordion>
       </div>
       {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
-      {loadedCount < matchIds.length && (
-        <div className="mt-4 flex justify-center">
-          <Button onClick={loadMore} disabled={isLoadingMore}>
-            {isLoadingMore ? "Loading..." : "Load More"}
-          </Button>
-        </div>
-      )}
+
+      <div className="mt-4 flex justify-center">
+        <Button onClick={loadMore} disabled={isLoadingMore}>
+          {isLoadingMore ? "Loading..." : "Load More"}
+        </Button>
+      </div>
     </div>
   );
 };
